@@ -1,8 +1,7 @@
 package com.aecoding.tictactoecompose.domain.entities
 
 data class GameState(
-    val board: List<List<Char>>,
-    val currentPlayer: String,
-    val isGameOver: Boolean = false,
-    val winner: Char? = null
+    var board: MutableList<MutableList<Char>>,
+    var currentPlayer: Player,
+    var isGameOver: Boolean = false,
 )

@@ -3,7 +3,9 @@ package com.aecoding.tictactoecompose
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.aecoding.tictactoecompose.presentation.screen.CreateRoomScreen
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.aecoding.tictactoecompose.presentation.screen.GameScreen
+import com.aecoding.tictactoecompose.presentation.viewmodel.GameViewModel
 import com.aecoding.tictactoecompose.ui.theme.TicTacToeComposeTheme
 
 class MainActivity : ComponentActivity() {
@@ -11,6 +13,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             TicTacToeComposeTheme {
+                GameScreen()
             }
         }
     }
