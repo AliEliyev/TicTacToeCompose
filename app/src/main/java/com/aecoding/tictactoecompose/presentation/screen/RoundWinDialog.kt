@@ -16,31 +16,33 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import com.aecoding.tictactoecompose.ui.theme.MainBg
 import com.aecoding.tictactoecompose.ui.theme.Orbitron
-import com.aecoding.tictactoecompose.ui.theme.TicTacToeComposeTheme
 import com.aecoding.tictactoecompose.ui.theme.YellowShadowColor
 
 @Composable
 fun RoundWinDialog(
     winner: String,
+    onClick: () -> Unit
 ) {
     val dialogOpen = remember { mutableStateOf(true) }
     if (dialogOpen.value) {
         AlertDialog(
             onDismissRequest = {},
-            confirmButton = {
+            confirmButton = {},
+            dismissButton = {
                 TextButton(
-                    onClick = {}
+                    onClick = {
+                        onClick()
+                        dialogOpen.value = false
+                    }
                 ) {
                     Text("Play Again")
                 }
             },
-            dismissButton = {},
             modifier = Modifier
                 .background(MainBg)
                 .padding(15.dp),
@@ -68,14 +70,5 @@ fun RoundWinDialog(
                 dismissOnClickOutside = false
             )
         )
-    }
-}
-
-
-@Preview
-@Composable
-private fun RoundWinPrev() {
-    TicTacToeComposeTheme {
-        RoundWinDialog("Player Two")
     }
 }

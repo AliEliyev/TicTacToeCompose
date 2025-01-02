@@ -15,15 +15,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.aecoding.tictactoecompose.presentation.utils.UserAction
 import com.aecoding.tictactoecompose.presentation.viewmodel.GameViewModel
 import com.aecoding.tictactoecompose.ui.theme.MainBg
 
 @Composable
 fun GameScreen(
-    viewModel: GameViewModel = viewModel()
+    viewModel: GameViewModel
 ) {
-    val gameState = viewModel.gameState
+    var gameState = viewModel.gameState
     Column(
         modifier = Modifier
             .background(
@@ -47,10 +47,10 @@ fun GameScreen(
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "playerOneNick"
+                    text = gameState.playerOne.playerName
                 )
                 Text(
-                    text = "0"
+                    text = gameState.playerOne.score.toString()
                 )
             }
             Column(
@@ -59,18 +59,38 @@ fun GameScreen(
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "playerTwoNick"
+                    text = gameState.playerTwo.playerName
                 )
                 Text(
-                    text = "0"
+                    text = gameState.playerTwo.score.toString()
                 )
             }
         }
-
-        gameState.value?.board?.let { it1 ->
-            GameBoard(it1) { row, col ->
-                viewModel.makeMove(row, col)
+        gameState.board.forEachIndexed { rowIndex, row ->
+            Row {
+                row.forEachIndexed { colIndex, text ->
+                    GameBox(text) {
+                        viewModel.OnAction(UserAction.makeMove(rowIndex, colIndex))
+                    }
+                }
             }
+        }
+
+        if (viewModel.checkWinner()){
+            if (gameState.winner == gameState.playerOne) {
+                gameState.playerOne = gameState.playerOne.copy(
+                    score = gameState.playerOne.score + 1
+                )
+            } else if (gameState.winner == gameState.playerTwo) {
+                gameState.playerTwo = gameState.playerTwo.copy(
+                    score = gameState.playerTwo.score + 1
+                )
+            }
+            RoundWinDialog(gameState.winner.playerName) {
+                gameState =  viewModel.resetGame()
+            }
+        }else if (viewModel.isBoardFull()) {
+            DrawScreen {gameState =  viewModel.resetGame() }
         }
 
         Box(
@@ -80,7 +100,7 @@ fun GameScreen(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "${gameState.value?.currentPlayer?.playerName} 's Turn",
+                text = "${gameState.currentPlayer.playerName} 's Turn",
                 fontSize = 25.sp,
                 lineHeight = 31.35.sp,
             )

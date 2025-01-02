@@ -1,56 +1,78 @@
 package com.aecoding.tictactoecompose.presentation.viewmodel
 
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.aecoding.tictactoecompose.domain.entities.GameState
-import com.aecoding.tictactoecompose.domain.entities.Player
-import com.aecoding.tictactoecompose.presentation.utils.Listeners
+import com.aecoding.tictactoecompose.presentation.utils.Checker
+import com.aecoding.tictactoecompose.presentation.utils.UserAction
 
-class GameViewModel(
-    //playerOne: Player,
-    //var playerTwo: Player,
-    //private val listener: Listeners
-) : ViewModel() {
-    var playerOne = Player(
-        playerName = "P1",
-        symbol = 'X'
-    )
-    var playerTwo = Player(
-        playerName = "P2",
-        symbol = 'O'
-    )
-    var listeners = Listeners()
-    private val _gameState =
-        mutableStateOf(
-            GameState(
-                board = MutableList(3) { MutableList(3) { ' ' } },
-                currentPlayer = playerOne
-            )
+class GameViewModel: ViewModel() {
+
+    private var checker = Checker()
+    var gameState by
+    mutableStateOf(
+        GameState(
+            board = MutableList(3) { MutableList(3) { ' ' } }
         )
-    val gameState: MutableState<GameState> get() = _gameState
-
-    //
+    )
 
 
-    fun makeMove(
-        row: Int,
-        column: Int
-    ) {
-        _gameState.value = listeners.makeMove(gameState.value, row, column)
-    }
+    @Composable
+    fun OnAction(action: UserAction) {
+        when (action) {
+            is UserAction.makeMove -> {
+                MakeMove(action.row, action.col)
+            }
 
-    fun switchTurn() {
-        if (_gameState.value.currentPlayer == playerOne) {
-            _gameState.value.currentPlayer = playerTwo
+            UserAction.resetGame -> {
+                resetGame()
+            }
         }
     }
 
-    fun resetGame() {
-        _gameState.value = listeners.resetGame(_gameState.value)
+
+    @Composable
+    private fun MakeMove(
+        row: Int,
+        column: Int
+    ) {
+        if (gameState.board[row][column] == ' ') {
+            gameState.board[row][column] = gameState.currentPlayer.symbol
+            if (checkWinner()){
+                gameState.winner = gameState.currentPlayer
+            }
+            switchTurn()
+
+        }
+    }
+
+    private fun switchTurn() {
+        if (gameState.currentPlayer == gameState.playerOne) {
+            gameState = gameState.copy(
+                currentPlayer = gameState.playerTwo
+            )
+        } else if (gameState.currentPlayer == gameState.playerTwo) {
+            gameState = gameState.copy(
+                currentPlayer = gameState.playerOne
+            )
+
+        }
+    }
+
+    fun resetGame(): GameState {
+       return gameState.copy(
+            board = MutableList(3){MutableList(3){' '} }
+        )
     }
 
     fun checkWinner(): Boolean {
-        return listeners.checkWinner(_gameState.value)
+        return checker.checkWinner(gameState)
+    }
+
+    fun isBoardFull(): Boolean {
+        return checker.isBoardFull(gameState)
     }
 }

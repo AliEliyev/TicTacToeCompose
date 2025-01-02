@@ -2,6 +2,14 @@ package com.aecoding.tictactoecompose.domain.entities
 
 data class GameState(
     var board: MutableList<MutableList<Char>>,
-    var currentPlayer: Player,
-    var isGameOver: Boolean = false,
+    var playerOne: Player = Player(
+        playerName = "Player X",
+        symbol = 'X'
+    ),
+    var playerTwo: Player = Player(
+        playerName = "Player O",
+        symbol = 'O'
+    ),
+    var currentPlayer: Player = playerOne,
+    var winner: Player = currentPlayer
 )

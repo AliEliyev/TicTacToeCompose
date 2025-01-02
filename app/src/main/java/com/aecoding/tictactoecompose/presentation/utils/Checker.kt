@@ -2,29 +2,10 @@ package com.aecoding.tictactoecompose.presentation.utils
 
 import com.aecoding.tictactoecompose.domain.entities.GameState
 
-class Listeners {
-    fun makeMove(
-        gameState: GameState,
-        row: Int,
-        column: Int
-    ): GameState {
-        if (gameState.board[row][column] == ' ') {
-            gameState.board[row][column] = gameState.currentPlayer.symbol
-        }
-
-
-        return GameState(
-            board = gameState.board,
-            currentPlayer = gameState.currentPlayer.copy(
-                symbol = if (gameState.currentPlayer.symbol == 'X') 'O' else 'X'
-            )
-        )
-    }
-
+class Checker {
     fun checkWinner(
         gameState: GameState
     ): Boolean {
-
         if (
             gameState.board[0][0] == gameState.board[1][1] &&
             gameState.board[1][1] == gameState.board[2][2] &&
@@ -54,9 +35,14 @@ class Listeners {
         return false
     }
 
-    fun resetGame(gameState: GameState): GameState {
-        return gameState.copy(
-            board = MutableList(3) { MutableList(3) { ' ' } }
-        )
+    fun isBoardFull(gameState: GameState):Boolean{
+        gameState.board.forEach { it ->
+            it.forEach {
+                if (it == ' '){
+                    return false
+                }
+            }
+        }
+        return true
     }
 }
