@@ -1,6 +1,5 @@
 package com.aecoding.tictactoecompose.presentation.viewmodel
 
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,7 +8,7 @@ import com.aecoding.tictactoecompose.domain.entities.GameState
 import com.aecoding.tictactoecompose.presentation.utils.Checker
 import com.aecoding.tictactoecompose.presentation.utils.UserAction
 
-class GameViewModel: ViewModel() {
+class GameViewModel : ViewModel() {
 
     private var checker = Checker()
     var gameState by
@@ -20,11 +19,10 @@ class GameViewModel: ViewModel() {
     )
 
 
-    @Composable
-    fun OnAction(action: UserAction) {
+    fun onAction(action: UserAction) {
         when (action) {
             is UserAction.makeMove -> {
-                MakeMove(action.row, action.col)
+                makeMove(action.row, action.col)
             }
 
             UserAction.resetGame -> {
@@ -34,18 +32,16 @@ class GameViewModel: ViewModel() {
     }
 
 
-    @Composable
-    private fun MakeMove(
+    private fun makeMove(
         row: Int,
         column: Int
     ) {
         if (gameState.board[row][column] == ' ') {
             gameState.board[row][column] = gameState.currentPlayer.symbol
-            if (checkWinner()){
-                gameState.winner = gameState.currentPlayer
+            if (checkWinner()) {
+                gameState.winner = gameState.currentPlayer.playerName
             }
             switchTurn()
-
         }
     }
 
@@ -63,8 +59,8 @@ class GameViewModel: ViewModel() {
     }
 
     fun resetGame(): GameState {
-       return gameState.copy(
-            board = MutableList(3){MutableList(3){' '} }
+        return gameState.copy(
+            board = MutableList(3) { MutableList(3) { ' ' } }
         )
     }
 

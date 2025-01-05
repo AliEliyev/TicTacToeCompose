@@ -23,7 +23,7 @@ import com.aecoding.tictactoecompose.ui.theme.Orbitron
 @Composable
 fun GameBox(
     text: Char,
-    onClick: @Composable () -> Unit
+    onClick: () -> Unit
 ) {
     val isClicked = remember { mutableStateOf(false) }
     Box(
@@ -37,15 +37,10 @@ fun GameBox(
                 spotColor = Color.White
             )
             .clickable {
-                isClicked.value = true
+               onClick()
             },
         contentAlignment = Alignment.Center
     ) {
-
-        if (isClicked.value) {
-            onClick()
-        }
-
         Text(
             text = text.toString(),
             fontSize = 80.sp,

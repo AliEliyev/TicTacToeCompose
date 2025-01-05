@@ -11,5 +11,5 @@ data class GameState(
         symbol = 'O'
     ),
     var currentPlayer: Player = playerOne,
-    var winner: Player = currentPlayer
+    var winner: String = currentPlayer.playerName
 )
