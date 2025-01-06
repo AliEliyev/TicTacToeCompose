@@ -54,7 +54,7 @@ fun GameScreen(
                     text = gameState.playerOne.playerName
                 )
                 Text(
-                    text = gameState.playerOne.score.toString()
+                    text = viewModel.gameState.playerOne.score.toString()
                 )
             }
             Column(
@@ -66,7 +66,7 @@ fun GameScreen(
                     text = gameState.playerTwo.playerName
                 )
                 Text(
-                    text = gameState.playerTwo.score.toString()
+                    text = viewModel.gameState.playerTwo.score.toString()
                 )
             }
         }
@@ -79,37 +79,7 @@ fun GameScreen(
                 }
             }
         }
-
-        if (viewModel.checkWinner()) {
-            if (viewModel.gameState.winner == gameState.playerOne.playerName) {
-                gameState.playerOne = gameState.playerOne.copy(
-                    score = gameState.playerOne.score + 1
-                )
-            } else if (viewModel.gameState.winner == gameState.playerTwo.playerName) {
-                gameState.playerTwo = gameState.playerTwo.copy(
-                    score = gameState.playerTwo.score + 1
-                )
-            }
-
-            if (gameState.playerOne.score == 3) {
-                GameWinDialog(gameState.playerOne.playerName){
-                    viewModel.gameState = viewModel.resetGame()
-                    onNavigateToMenu()
-                }
-            } else if (gameState.playerTwo.score == 3) {
-                GameWinDialog(gameState.playerTwo.playerName){
-                    viewModel.gameState = viewModel.resetGame()
-                    onNavigateToMenu()
-                }
-            } else {
-                RoundWinDialog(viewModel.gameState.winner) {
-                    viewModel.gameState = viewModel.resetBoard()
-                }
-            }
-        } else if (viewModel.isBoardFull()) {
-            DrawScreen { viewModel.gameState = viewModel.resetBoard() }
-        }
-
+        viewModel.Check { onNavigateToMenu() }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
