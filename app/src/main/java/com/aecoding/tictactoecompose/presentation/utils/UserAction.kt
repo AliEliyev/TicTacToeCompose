@@ -5,5 +5,5 @@ sealed class UserAction {
         val row: Int,
         val col: Int
     ) : UserAction()
-    object resetGame : UserAction()
+    data object resetGame : UserAction()
 }
