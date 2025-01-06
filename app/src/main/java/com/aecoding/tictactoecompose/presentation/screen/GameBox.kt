@@ -18,14 +18,21 @@ import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.aecoding.tictactoecompose.ui.theme.BlueShadowColor
 import com.aecoding.tictactoecompose.ui.theme.Orbitron
+import com.aecoding.tictactoecompose.ui.theme.YellowShadowColor
 
 @Composable
 fun GameBox(
     text: Char,
     onClick: () -> Unit
 ) {
-    val isClicked = remember { mutableStateOf(false) }
+    val color = remember { mutableStateOf(Color.White) }
+    when (text) {
+        'X' -> {color.value = BlueShadowColor}
+        'O' -> {color.value = YellowShadowColor}
+        else -> {color.value = Color.White}
+    }
     Box(
         modifier = Modifier
             .padding(5.dp)
@@ -33,8 +40,8 @@ fun GameBox(
             .shadow(
                 elevation = 1.dp,
                 shape = RoundedCornerShape(4.dp),
-                ambientColor = Color.White,
-                spotColor = Color.White
+                ambientColor = color.value,
+                spotColor = color.value
             )
             .clickable {
                onClick()
@@ -48,7 +55,7 @@ fun GameBox(
             style = TextStyle(
                 fontFamily = Orbitron,
                 shadow = Shadow(
-                    color = Color.White,
+                    color = color.value,
                     offset = Offset(-3f, -3f),
                     blurRadius = 25f
                 )
