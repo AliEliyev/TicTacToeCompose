@@ -30,7 +30,11 @@ fun Navigation(
             )
         }
         composable(Screen.WaitingScreen.route) { WaitingScreen() }
-        composable(Screen.GameScreen.route) { GameScreen(gameViewModel) }
+        composable(Screen.GameScreen.route) {
+            GameScreen(
+                viewModel = gameViewModel,
+                onNavigateToMenu = { navController.navigate(Screen.MenuScreen.route) })
+        }
         composable(Screen.CreateRoomScreen.route) { CreateRoomScreen() }
         composable(Screen.JoinRoomScreen.route) { JoinRoomScreen() }
     }

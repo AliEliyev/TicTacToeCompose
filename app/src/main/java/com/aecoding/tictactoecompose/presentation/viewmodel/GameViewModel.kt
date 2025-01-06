@@ -26,7 +26,7 @@ class GameViewModel : ViewModel() {
             }
 
             UserAction.resetGame -> {
-                resetGame()
+                resetBoard()
             }
         }
     }
@@ -58,8 +58,14 @@ class GameViewModel : ViewModel() {
         }
     }
 
-    fun resetGame(): GameState {
+    fun resetBoard(): GameState {
         return gameState.copy(
+            board = MutableList(3) { MutableList(3) { ' ' } }
+        )
+    }
+
+    fun resetGame(): GameState{
+        return GameState(
             board = MutableList(3) { MutableList(3) { ' ' } }
         )
     }

@@ -25,7 +25,8 @@ import com.aecoding.tictactoecompose.ui.theme.YellowShadowColor
 
 @Composable
 fun GameWinDialog(
-    winner: String
+    winner: String,
+    onClick: () -> Unit
 ) {
     val dialogOpen = remember { mutableStateOf(true) }
     if (dialogOpen.value) {
@@ -33,8 +34,7 @@ fun GameWinDialog(
             onDismissRequest = {},
             confirmButton = {
                 TextButton(
-                    onClick = {
-                    }
+                    onClick = { onClick() }
                 ) {
                     Text("Back to the Menu")
                 }

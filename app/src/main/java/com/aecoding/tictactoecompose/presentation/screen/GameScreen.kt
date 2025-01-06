@@ -24,7 +24,8 @@ import com.aecoding.tictactoecompose.ui.theme.MainBg
 
 @Composable
 fun GameScreen(
-    viewModel: GameViewModel
+    viewModel: GameViewModel,
+    onNavigateToMenu: () -> Unit,
 ) {
     val gameState by remember { mutableStateOf(viewModel.gameState) }
     Column(
@@ -89,11 +90,24 @@ fun GameScreen(
                     score = gameState.playerTwo.score + 1
                 )
             }
-            RoundWinDialog(viewModel.gameState.winner) {
-                viewModel.gameState = viewModel.resetGame()
+
+            if (gameState.playerOne.score == 3) {
+                GameWinDialog(gameState.playerOne.playerName){
+                    viewModel.gameState = viewModel.resetGame()
+                    onNavigateToMenu()
+                }
+            } else if (gameState.playerTwo.score == 3) {
+                GameWinDialog(gameState.playerTwo.playerName){
+                    viewModel.gameState = viewModel.resetGame()
+                    onNavigateToMenu()
+                }
+            } else {
+                RoundWinDialog(viewModel.gameState.winner) {
+                    viewModel.gameState = viewModel.resetBoard()
+                }
             }
         } else if (viewModel.isBoardFull()) {
-            DrawScreen { viewModel.gameState = viewModel.resetGame() }
+            DrawScreen { viewModel.gameState = viewModel.resetBoard() }
         }
 
         Box(
