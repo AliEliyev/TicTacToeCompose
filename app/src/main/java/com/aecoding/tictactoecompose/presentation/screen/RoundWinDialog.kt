@@ -25,10 +25,11 @@ import com.aecoding.tictactoecompose.ui.theme.YellowShadowColor
 
 @Composable
 fun RoundWinDialog(
+    showDialog: Boolean,
     winner: String,
     onClick: () -> Unit
 ) {
-    val dialogOpen = remember { mutableStateOf(true) }
+    val dialogOpen = remember { mutableStateOf(showDialog) }
     if (dialogOpen.value) {
         AlertDialog(
             onDismissRequest = {},

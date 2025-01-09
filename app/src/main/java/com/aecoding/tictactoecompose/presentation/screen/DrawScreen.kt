@@ -24,9 +24,10 @@ import com.aecoding.tictactoecompose.ui.theme.YellowShadowColor
 
 @Composable
 fun DrawScreen(
+    showDialog: Boolean,
     onClick:() -> Unit
 ) {
-    val dialogOpen = remember { mutableStateOf(true) }
+    val dialogOpen = remember { mutableStateOf(showDialog) }
     if (dialogOpen.value) {
         AlertDialog(
             onDismissRequest = {},

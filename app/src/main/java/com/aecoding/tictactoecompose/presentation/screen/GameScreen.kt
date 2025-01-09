@@ -11,14 +11,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aecoding.tictactoecompose.presentation.utils.UserAction
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.aecoding.tictactoecompose.domain.entities.GameEffect
 import com.aecoding.tictactoecompose.presentation.viewmodel.GameViewModel
 import com.aecoding.tictactoecompose.ui.theme.MainBg
 
@@ -27,7 +25,7 @@ fun GameScreen(
     viewModel: GameViewModel,
     onNavigateToMenu: () -> Unit,
 ) {
-    val gameState by remember { mutableStateOf(viewModel.gameState) }
+    val gameState = viewModel.gameState.collectAsStateWithLifecycle()
     Column(
         modifier = Modifier
             .background(
@@ -51,10 +49,10 @@ fun GameScreen(
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = gameState.playerOne.playerName
+                    text = gameState.value.playerOne.playerName
                 )
                 Text(
-                    text = viewModel.gameState.playerOne.score.toString()
+                    text = gameState.value.playerOne.score.toString()
                 )
             }
             Column(
@@ -63,23 +61,45 @@ fun GameScreen(
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = gameState.playerTwo.playerName
+                    text = gameState.value.playerTwo.playerName
                 )
                 Text(
-                    text = viewModel.gameState.playerTwo.score.toString()
+                    text = gameState.value.playerTwo.score.toString()
                 )
             }
         }
-        viewModel.gameState.board.forEachIndexed { rowIndex, row ->
+        gameState.value.board.forEachIndexed { rowIndex, row ->
             Row {
                 row.forEachIndexed { colIndex, text ->
                     GameBox(text) {
-                        viewModel.onAction(UserAction.makeMove(rowIndex, colIndex))
+                        viewModel.makeMove(rowIndex, colIndex)
                     }
                 }
             }
         }
-        viewModel.Check { onNavigateToMenu() }
+        viewModel.check()
+        when(gameState.value.gameEffect){
+            GameEffect.ShowWinnerDialog -> {
+                GameWinDialog(gameState.value.winner) {
+                    onNavigateToMenu()
+                    viewModel.resetGame()
+                    viewModel.resetEffect()
+                }
+            }
+            GameEffect.ShowRoundDialog -> {
+                RoundWinDialog(
+                    showDialog = true,
+                    winner = gameState.value.winner) {
+                    viewModel.resetEffect()
+                }
+            }
+            GameEffect.ShowDrawDialog -> {
+                DrawScreen(true){
+                    viewModel.resetEffect()
+                }
+            }
+            null -> {}
+        }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -87,7 +107,7 @@ fun GameScreen(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "${viewModel.gameState.currentPlayer.playerName} 's Turn",
+                text = "${gameState.value.currentPlayer.playerName} 's Turn",
                 fontSize = 25.sp,
                 lineHeight = 31.35.sp,
             )
