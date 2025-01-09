@@ -26,6 +26,7 @@ fun GameScreen(
     onNavigateToMenu: () -> Unit,
 ) {
     val gameState = viewModel.gameState.collectAsStateWithLifecycle()
+
     Column(
         modifier = Modifier
             .background(
@@ -68,6 +69,7 @@ fun GameScreen(
                 )
             }
         }
+
         gameState.value.board.forEachIndexed { rowIndex, row ->
             Row {
                 row.forEachIndexed { colIndex, text ->
@@ -77,13 +79,15 @@ fun GameScreen(
                 }
             }
         }
+
         viewModel.check()
         when(gameState.value.gameEffect){
             GameEffect.ShowWinnerDialog -> {
-                GameWinDialog(gameState.value.winner) {
+                GameWinDialog(
+                    showDialog = true,
+                    winner = gameState.value.winner) {
                     onNavigateToMenu()
                     viewModel.resetGame()
-                    viewModel.resetEffect()
                 }
             }
             GameEffect.ShowRoundDialog -> {

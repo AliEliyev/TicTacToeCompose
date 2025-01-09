@@ -38,10 +38,13 @@ class GameViewModel : ViewModel() {
                 _gameState.value = _gameState.value.copy(
                     gameEffect = GameEffect.ShowWinnerDialog
                 )
+                resetBoard()
             } else if (_gameState.value.playerTwo.score == 3) {
                 _gameState.value = _gameState.value.copy(
                     gameEffect = GameEffect.ShowWinnerDialog
                 )
+                resetBoard()
+
             } else {
                 resetBoard()
                 _gameState.value = _gameState.value.copy(
