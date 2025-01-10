@@ -1,120 +1,125 @@
 package com.aecoding.tictactoecompose.presentation.viewmodel
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.aecoding.tictactoecompose.domain.entities.GameEffect
 import com.aecoding.tictactoecompose.domain.entities.GameState
-import com.aecoding.tictactoecompose.presentation.screen.DrawScreen
-import com.aecoding.tictactoecompose.presentation.screen.GameWinDialog
-import com.aecoding.tictactoecompose.presentation.screen.RoundWinDialog
-import com.aecoding.tictactoecompose.presentation.utils.Checker
-import com.aecoding.tictactoecompose.presentation.utils.UserAction
+import com.aecoding.tictactoecompose.presentation.utils.check
+import com.aecoding.tictactoecompose.presentation.utils.isBoardFull
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 class GameViewModel : ViewModel() {
 
-    private var checker = Checker()
-    var gameState by
-    mutableStateOf(
+
+    private val _gameState = MutableStateFlow(
         GameState(
-            board = MutableList(3) { MutableList(3) { ' ' } }
+            board = List(3) { List(3) { ' ' } }
         )
     )
+    val gameState: StateFlow<GameState> = _gameState
 
-    @Composable
-    fun Check(
-        onNavigateToMenu: () -> Unit,
-    ){
-
+    private fun check() {
         if (checkWinner()) {
-            if (gameState.winner == gameState.playerOne.playerName) {
-                gameState.playerOne = gameState.playerOne.copy(
-                    score = gameState.playerOne.score + 1
+            if (_gameState.value.winner == _gameState.value.playerOne.playerName) {
+                _gameState.value = _gameState.value.copy(
+                    playerOne = _gameState.value.playerOne.copy(
+                        score = _gameState.value.playerOne.score + 1
+                    )
                 )
-            } else if (gameState.winner == gameState.playerTwo.playerName) {
-                gameState.playerTwo = gameState.playerTwo.copy(
-                    score = gameState.playerTwo.score + 1
+            } else if (_gameState.value.winner == _gameState.value.playerTwo.playerName) {
+                _gameState.value = _gameState.value.copy(
+                    playerTwo = _gameState.value.playerTwo.copy(
+                        score = _gameState.value.playerTwo.score + 1
+                    )
                 )
             }
 
-            if (gameState.playerOne.score == 3) {
-                GameWinDialog(gameState.playerOne.playerName){
-                    gameState = resetGame()
-                    onNavigateToMenu()
-                }
-            } else if (gameState.playerTwo.score == 3) {
-                GameWinDialog(gameState.playerTwo.playerName){
-                    gameState = resetGame()
-                    onNavigateToMenu()
-                }
+            if (_gameState.value.playerOne.score == 3) {
+                _gameState.value = _gameState.value.copy(
+                    gameEffect = GameEffect.ShowWinnerDialog
+                )
+                resetBoard()
+            } else if (_gameState.value.playerTwo.score == 3) {
+                _gameState.value = _gameState.value.copy(
+                    gameEffect = GameEffect.ShowWinnerDialog
+                )
+                resetBoard()
+
             } else {
-                RoundWinDialog(gameState.winner) {
-                    gameState = resetBoard()
-                }
+                resetBoard()
+                _gameState.value = _gameState.value.copy(
+                    gameEffect = GameEffect.ShowRoundDialog
+                )
             }
         } else if (isBoardFull()) {
-            DrawScreen { gameState = resetBoard() }
+            _gameState.value = _gameState.value.copy(
+                gameEffect = GameEffect.ShowDrawDialog
+            )
+            resetBoard()
         }
     }
 
-
-    fun onAction(action: UserAction) {
-        when (action) {
-            is UserAction.makeMove -> {
-                makeMove(action.row, action.col)
-            }
-
-            UserAction.resetGame -> {
-                resetBoard()
-            }
-        }
+    fun resetEffect() {
+        _gameState.value = _gameState.value.copy(
+            gameEffect = null
+        )
     }
 
-
-    private fun makeMove(
+    fun makeMove(
         row: Int,
         column: Int
     ) {
-        if (gameState.board[row][column] == ' ') {
-            gameState.board[row][column] = gameState.currentPlayer.symbol
+        val updatedBoard: List<List<Char>>
+
+        if (_gameState.value.board[row][column] == ' ') {
+            updatedBoard = _gameState.value.board.mapIndexed { r, rowList ->
+                rowList.mapIndexed { c, cell ->
+                    if (r == row && c == column) _gameState.value.currentPlayer.symbol else cell
+                }
+            }
+            _gameState.value = _gameState.value.copy(
+                board = updatedBoard
+            )
             if (checkWinner()) {
-                gameState.winner = gameState.currentPlayer.playerName
+                _gameState.value = _gameState.value.copy(
+                    winner = _gameState.value.currentPlayer.playerName
+                )
             }
             switchTurn()
+            check()
         }
     }
 
     private fun switchTurn() {
-        if (gameState.currentPlayer == gameState.playerOne) {
-            gameState = gameState.copy(
-                currentPlayer = gameState.playerTwo
+        if (_gameState.value.currentPlayer == _gameState.value.playerOne) {
+            _gameState.value = _gameState.value.copy(
+                currentPlayer = _gameState.value.playerTwo
             )
-        } else if (gameState.currentPlayer == gameState.playerTwo) {
-            gameState = gameState.copy(
-                currentPlayer = gameState.playerOne
+        } else if (_gameState.value.currentPlayer == _gameState.value.playerTwo) {
+            _gameState.value = _gameState.value.copy(
+                currentPlayer = _gameState.value.playerOne
             )
 
         }
     }
 
-    fun resetBoard(): GameState {
-        return gameState.copy(
-            board = MutableList(3) { MutableList(3) { ' ' } }
+    private fun resetBoard() {
+        _gameState.value = _gameState.value.copy(
+            board = List(3) { List(3) { ' ' } }
         )
     }
 
-    fun resetGame(): GameState{
-        return GameState(
-            board = MutableList(3) { MutableList(3) { ' ' } }
+    fun resetGame() {
+        _gameState.value = GameState(
+            board = List(3) { List(3) { ' ' } }
         )
     }
 
-    fun checkWinner(): Boolean {
-        return checker.checkWinner(gameState)
+    private fun checkWinner(): Boolean {
+        return _gameState.value.board.check()
     }
 
-    fun isBoardFull(): Boolean {
-        return checker.isBoardFull(gameState)
+    private fun isBoardFull(): Boolean {
+        return _gameState.value.board.isBoardFull()
     }
 }

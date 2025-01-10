@@ -14,21 +14,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.aecoding.tictactoecompose.R
+import com.aecoding.tictactoecompose.presentation.utils.ButtonText
 import com.aecoding.tictactoecompose.ui.theme.BlueShadowColor
 import com.aecoding.tictactoecompose.ui.theme.MainBg
-import com.aecoding.tictactoecompose.ui.theme.Orbitron
 import com.aecoding.tictactoecompose.ui.theme.TicTacToeComposeTheme
 
 @Composable
@@ -41,17 +37,11 @@ fun WaitingScreen() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "Waiting for a player to join...",
+        ButtonText(
             modifier = Modifier.padding(20.dp),
-            color = Color.White,
-            fontFamily = Orbitron,
-            fontWeight = FontWeight.W400,
-            fontSize = 18.sp,
-            lineHeight = 22.57.sp,
-            textAlign = TextAlign.Center
+            text = "Waiting for a player to join...",
+            color = Color.White
         )
-
         Box(
             modifier = Modifier
                 .height(50.dp)
@@ -63,14 +53,9 @@ fun WaitingScreen() {
                 ),
             contentAlignment = Alignment.Center
         ) {
-            Text(
+            ButtonText(
                 text = "21315466",
-                color = Color.White,
-                fontFamily = Orbitron,
-                fontWeight = FontWeight.W400,
-                fontSize = 18.sp,
-                lineHeight = 22.57.sp,
-                textAlign = TextAlign.Center
+                color = Color.White
             )
             IconButton(
                 onClick = {},

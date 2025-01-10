@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-fun Modifier.shadow(
+fun Modifier.buttonShadow(
     color: Color = Color.Black,
     borderRadius: Dp = 0.dp,
     blurRadius: Dp = 0.dp,

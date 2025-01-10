@@ -1,4 +1,4 @@
-package com.aecoding.tictactoecompose.data
+package com.aecoding.tictactoecompose.presentation.nav
 
 sealed class Screen(
     val route: String
