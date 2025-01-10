@@ -79,28 +79,31 @@ fun GameScreen(
                 }
             }
         }
-
-        viewModel.check()
-        when(gameState.value.gameEffect){
+        when (gameState.value.gameEffect) {
             GameEffect.ShowWinnerDialog -> {
                 GameWinDialog(
                     showDialog = true,
-                    winner = gameState.value.winner) {
-                    onNavigateToMenu()
-                    viewModel.resetGame()
-                }
+                    winner = gameState.value.winner,
+                    onClick = {
+                        onNavigateToMenu()
+                        viewModel.resetGame()
+                    }
+                )
             }
+
             GameEffect.ShowRoundDialog -> {
                 RoundWinDialog(
                     showDialog = true,
-                    winner = gameState.value.winner) {
-                    viewModel.resetEffect()
-                }
+                    winner = gameState.value.winner,
+                    onClick = { viewModel.resetEffect() }
+                )
             }
+
             GameEffect.ShowDrawDialog -> {
-                DrawScreen(true){
-                    viewModel.resetEffect()
-                }
+                DrawScreen(
+                    showDialog = true,
+                    onClick = { viewModel.resetEffect() }
+                )
             }
             null -> {}
         }

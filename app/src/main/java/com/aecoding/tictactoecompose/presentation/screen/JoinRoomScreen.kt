@@ -14,7 +14,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,15 +25,15 @@ import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aecoding.tictactoecompose.presentation.utils.shadow
+import com.aecoding.tictactoecompose.presentation.utils.ButtonText
+import com.aecoding.tictactoecompose.presentation.utils.HeaderText
+import com.aecoding.tictactoecompose.presentation.utils.buttonShadow
 import com.aecoding.tictactoecompose.ui.theme.BlueShadowColor
 import com.aecoding.tictactoecompose.ui.theme.MainBg
 import com.aecoding.tictactoecompose.ui.theme.Orbitron
 import com.aecoding.tictactoecompose.ui.theme.PlaceholderColor
-import com.aecoding.tictactoecompose.ui.theme.TicTacToeComposeTheme
 
 @Composable
 fun JoinRoomScreen() {
@@ -56,37 +55,23 @@ fun JoinRoomScreen() {
                 .width(330.dp)
                 .height(180.dp)
         ) {
-            Text(
+            HeaderText(
                 text = "Join Room",
-                style = TextStyle(
-                    shadow = Shadow(
-                        color = BlueShadowColor,
-                        offset = Offset(3f, 3f),
-                        blurRadius = 25f
-                    )
-                ),
-                fontFamily = Orbitron,
-                fontWeight = FontWeight.W400,
-                fontSize = 70.sp,
-                lineHeight = 87.78.sp,
-                textAlign = TextAlign.Center,
-                color = Color.White
+                textColor = Color.White,
+                shadow = Shadow(
+                    color = BlueShadowColor,
+                    offset = Offset(3f, 3f),
+                    blurRadius = 25f
+                )
             )
-            Text(
+            HeaderText(
                 text = "Join Room",
-                style = TextStyle(
-                    shadow = Shadow(
-                        color = BlueShadowColor,
-                        offset = Offset(-3f, -3f),
-                        blurRadius = 25f
-                    )
-                ),
-                fontFamily = Orbitron,
-                fontWeight = FontWeight.W400,
-                fontSize = 70.sp,
-                lineHeight = 87.78.sp,
-                textAlign = TextAlign.Center,
-                color = Color.White
+                textColor = Color.White,
+                shadow = Shadow(
+                    color = BlueShadowColor,
+                    offset = Offset(-3f, -3f),
+                    blurRadius = 25f
+                )
             )
         }
 
@@ -111,16 +96,10 @@ fun JoinRoomScreen() {
                         .fillMaxWidth(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        modifier = Modifier
-                            .padding(start = 20.dp, end = 20.dp),
+                    ButtonText(
+                        modifier = Modifier.padding(horizontal = 20.dp),
                         text = "Enter your nickname",
-                        fontFamily = Orbitron,
-                        fontWeight = FontWeight.W400,
-                        fontSize = 18.sp,
-                        lineHeight = 22.57.sp,
-                        color = PlaceholderColor,
-                        textAlign = TextAlign.Center
+                        color = PlaceholderColor
                     )
                 }
             },
@@ -151,16 +130,10 @@ fun JoinRoomScreen() {
                         .fillMaxWidth(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        modifier = Modifier
-                            .padding(start = 20.dp, end = 20.dp),
+                    ButtonText(
+                        modifier = Modifier.padding(horizontal = 20.dp),
                         text = "Enter Room Id",
-                        fontFamily = Orbitron,
-                        fontWeight = FontWeight.W400,
-                        fontSize = 18.sp,
-                        lineHeight = 22.57.sp,
-                        color = PlaceholderColor,
-                        textAlign = TextAlign.Center
+                        color = PlaceholderColor
                     )
                 }
             },
@@ -176,31 +149,17 @@ fun JoinRoomScreen() {
                 .padding(10.dp)
                 .fillMaxWidth()
                 .height(50.dp)
-                .shadow(
+                .buttonShadow(
                     color = BlueShadowColor,
                     borderRadius = 10.dp,
                     blurRadius = 3.dp,
                 ),
             shape = RoundedCornerShape(10.dp)
         ) {
-            Text(
+            ButtonText(
                 text = "Join",
-                fontFamily = Orbitron,
-                fontWeight = FontWeight.W400,
-                fontSize = 18.sp,
-                lineHeight = 22.57.sp,
-                textAlign = TextAlign.Center,
                 color = Color.White
             )
         }
     }
-}
-
-@Preview
-@Composable
-private fun CreatePreview() {
-    TicTacToeComposeTheme {
-        JoinRoomScreen()
-    }
-
 }

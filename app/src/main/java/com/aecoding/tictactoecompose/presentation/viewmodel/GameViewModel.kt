@@ -18,7 +18,7 @@ class GameViewModel : ViewModel() {
     )
     val gameState: StateFlow<GameState> = _gameState
 
-    fun check() {
+    private fun check() {
         if (checkWinner()) {
             if (_gameState.value.winner == _gameState.value.playerOne.playerName) {
                 _gameState.value = _gameState.value.copy(
@@ -86,6 +86,7 @@ class GameViewModel : ViewModel() {
                 )
             }
             switchTurn()
+            check()
         }
     }
 
