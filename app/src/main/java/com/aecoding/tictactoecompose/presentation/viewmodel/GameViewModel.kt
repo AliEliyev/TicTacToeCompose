@@ -8,7 +8,7 @@ import com.aecoding.tictactoecompose.presentation.utils.isBoardFull
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class GameViewModel : ViewModel() {
+open class GameViewModel : ViewModel() {
 
 
     private val _gameState = MutableStateFlow(

@@ -11,11 +11,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -26,18 +30,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.aecoding.tictactoecompose.data.OnlineRepository
 import com.aecoding.tictactoecompose.presentation.utils.ButtonText
 import com.aecoding.tictactoecompose.presentation.utils.HeaderText
 import com.aecoding.tictactoecompose.presentation.utils.buttonShadow
+import com.aecoding.tictactoecompose.presentation.viewmodel.OnlineViewModel
 import com.aecoding.tictactoecompose.ui.theme.BlueShadowColor
 import com.aecoding.tictactoecompose.ui.theme.MainBg
 import com.aecoding.tictactoecompose.ui.theme.Orbitron
 import com.aecoding.tictactoecompose.ui.theme.PlaceholderColor
+import kotlin.random.Random
+import kotlin.random.nextInt
 
 @Composable
-fun CreateRoomScreen() {
-
+fun CreateRoomScreen(
+    onNavigateToWaiting: (String) -> Unit
+) {
     val text = remember { mutableStateOf("") }
+    var isEmpty by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -89,6 +100,15 @@ fun CreateRoomScreen() {
                 textAlign = TextAlign.Center,
                 color = Color.White
             ),
+            supportingText = {
+                if (isEmpty) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = "Name can't be empty",
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
             placeholder = {
                 Box(
                     modifier = Modifier
@@ -109,7 +129,13 @@ fun CreateRoomScreen() {
         )
 
         Button(
-            onClick = {},
+            onClick = {
+                isEmpty = text.value.isEmpty()
+                if (!isEmpty){
+                    val gameId = Random.nextInt(1000000..9999999).toString()
+                    onNavigateToWaiting(gameId)
+                }
+            },
             modifier = Modifier
                 .padding(10.dp)
                 .fillMaxWidth()

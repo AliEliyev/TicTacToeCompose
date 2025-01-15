@@ -1,6 +1,7 @@
 package com.aecoding.tictactoecompose.presentation.screen
 
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -15,20 +16,24 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.aecoding.tictactoecompose.R
 import com.aecoding.tictactoecompose.presentation.utils.ButtonText
 import com.aecoding.tictactoecompose.ui.theme.BlueShadowColor
 import com.aecoding.tictactoecompose.ui.theme.MainBg
-import com.aecoding.tictactoecompose.ui.theme.TicTacToeComposeTheme
 
 @Composable
-fun WaitingScreen() {
+fun WaitingScreen(gameId: String) {
+    val copy = remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .background(color = MainBg)
@@ -54,11 +59,13 @@ fun WaitingScreen() {
             contentAlignment = Alignment.Center
         ) {
             ButtonText(
-                text = "21315466",
+                text = gameId,
                 color = Color.White
             )
             IconButton(
-                onClick = {},
+                onClick = {
+                    copy.value = true
+                },
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
                     .width(50.dp),
@@ -70,16 +77,20 @@ fun WaitingScreen() {
                     tint = Color.White
                 )
             }
+            if (copy.value) {
+                CopyToClipboard(gameId)
+                copy.value = false
+            }
         }
-
-
     }
 }
 
-@Preview
+
 @Composable
-private fun WaitingPrev() {
-    TicTacToeComposeTheme {
-        WaitingScreen()
-    }
+fun CopyToClipboard(text: String, message: String = "Copied to clipboard!") {
+    val clipboardManager = LocalClipboardManager.current
+    val context = LocalContext.current
+
+    clipboardManager.setText(AnnotatedString(text)) // Copy text to clipboard
+    Toast.makeText(context, message, Toast.LENGTH_SHORT).show() // Optional: Show a toast message
 }

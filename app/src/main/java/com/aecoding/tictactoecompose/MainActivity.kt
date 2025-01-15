@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.aecoding.tictactoecompose.presentation.nav.Navigation
 import com.aecoding.tictactoecompose.presentation.viewmodel.GameViewModel
+import com.aecoding.tictactoecompose.presentation.viewmodel.OnlineViewModel
 import com.aecoding.tictactoecompose.ui.theme.TicTacToeComposeTheme
 
 class MainActivity : ComponentActivity() {
@@ -18,7 +19,7 @@ class MainActivity : ComponentActivity() {
             TicTacToeComposeTheme {
                 Navigation(
                     navController = navController,
-                    gameViewModel = gameViewModel
+                    gameViewModel = gameViewModel,
                 )
             }
         }

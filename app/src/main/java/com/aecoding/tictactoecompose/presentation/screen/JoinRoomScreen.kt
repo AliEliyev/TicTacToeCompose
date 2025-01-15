@@ -12,11 +12,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -38,7 +42,9 @@ import com.aecoding.tictactoecompose.ui.theme.PlaceholderColor
 @Composable
 fun JoinRoomScreen() {
 
-    val text = remember { mutableStateOf("") }
+    val name = remember { mutableStateOf("") }
+    val roomId = remember { mutableStateOf("") }
+    var isEmpty by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -76,8 +82,8 @@ fun JoinRoomScreen() {
         }
 
         OutlinedTextField(
-            value = text.value,
-            onValueChange = { text.value = it },
+            value = name.value,
+            onValueChange = { name.value = it },
             modifier = Modifier
                 .padding(10.dp)
                 .fillMaxWidth(),
@@ -90,6 +96,15 @@ fun JoinRoomScreen() {
                 textAlign = TextAlign.Center,
                 color = Color.White
             ),
+            supportingText = {
+                if (isEmpty) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = "Name can't be empty",
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
             placeholder = {
                 Box(
                     modifier = Modifier
@@ -110,8 +125,8 @@ fun JoinRoomScreen() {
         )
 
         OutlinedTextField(
-            value = text.value,
-            onValueChange = { text.value = it },
+            value = roomId.value,
+            onValueChange = { roomId.value = it },
             modifier = Modifier
                 .padding(10.dp)
                 .fillMaxWidth(),
@@ -124,6 +139,15 @@ fun JoinRoomScreen() {
                 textAlign = TextAlign.Center,
                 color = Color.White
             ),
+            supportingText = {
+                if (isEmpty) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = "Name can't be empty",
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
             placeholder = {
                 Box(
                     modifier = Modifier
@@ -144,7 +168,11 @@ fun JoinRoomScreen() {
         )
 
         Button(
-            onClick = {},
+            onClick = {
+                isEmpty = name.value.isEmpty() && roomId.value.isEmpty()
+
+                if (!isEmpty){ }
+                      },
             modifier = Modifier
                 .padding(10.dp)
                 .fillMaxWidth()
