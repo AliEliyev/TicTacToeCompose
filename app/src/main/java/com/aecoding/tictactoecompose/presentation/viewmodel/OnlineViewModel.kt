@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aecoding.tictactoecompose.data.OnlineRepository
 import com.aecoding.tictactoecompose.data.Result
+import com.aecoding.tictactoecompose.data.mappers.toDto
+import com.aecoding.tictactoecompose.data.mappers.toRoom
 import com.aecoding.tictactoecompose.domain.entities.GameState
 import com.aecoding.tictactoecompose.domain.entities.GameStatus
 import com.aecoding.tictactoecompose.domain.entities.Room
@@ -41,7 +43,7 @@ class OnlineViewModel : ViewModel
                 )
             )
             viewModelScope.launch {
-                onlineRepository.saveRoom(_room.value)
+                onlineRepository.saveRoom(_room.value.toDto())
             }
         }
     }
@@ -57,7 +59,7 @@ class OnlineViewModel : ViewModel
                 )
             )
             viewModelScope.launch {
-                onlineRepository.saveRoom(_room.value)
+                onlineRepository.saveRoom(_room.value.toDto())
             }
         }
     }
@@ -67,7 +69,7 @@ class OnlineViewModel : ViewModel
             //_room.value = onlineRepository.fetchRoom(_room.value)
             when(val result = onlineRepository.fetchRoom(_room.value)){
                 is Result.Error -> TODO()
-                is Result.Success -> _room.value = result.data
+                is Result.Success -> _room.value = result.data.toRoom()
             }
         }
     }

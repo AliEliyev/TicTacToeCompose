@@ -1,5 +1,6 @@
 package com.aecoding.tictactoecompose.data
 
+import com.aecoding.tictactoecompose.data.dto.RoomDto
 import com.aecoding.tictactoecompose.domain.entities.Room
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
@@ -8,7 +9,7 @@ import kotlinx.coroutines.tasks.await
 
 class OnlineRepository(private val firestore: FirebaseFirestore) {
 
-    suspend fun saveRoom(room: Room): Result<Unit> =
+    suspend fun saveRoom(room: RoomDto): Result<Unit> =
         try {
             firestore.collection("rooms")
                 .document(room.roomId)
@@ -19,10 +20,10 @@ class OnlineRepository(private val firestore: FirebaseFirestore) {
             Result.Error(e)
         }
 
-    suspend fun fetchRoom(room: Room): Result<Room> = try {
+    suspend fun fetchRoom(room: Room): Result<RoomDto> = try {
         val querySnapshot = Firebase.firestore.collection("games")
             .document(room.roomId).get().await()
-        val fetchedRoom = querySnapshot.toObject(Room::class.java)!!
+        val fetchedRoom = querySnapshot.toObject(RoomDto::class.java)!!
 
         Result.Success(fetchedRoom)
     } catch (e: Exception) {
