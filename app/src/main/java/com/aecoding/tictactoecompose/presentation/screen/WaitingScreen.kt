@@ -27,12 +27,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.aecoding.tictactoecompose.R
+import com.aecoding.tictactoecompose.domain.entities.GameStatus
 import com.aecoding.tictactoecompose.presentation.utils.ButtonText
+import com.aecoding.tictactoecompose.presentation.viewmodel.OnlineViewModel
 import com.aecoding.tictactoecompose.ui.theme.BlueShadowColor
 import com.aecoding.tictactoecompose.ui.theme.MainBg
 
 @Composable
-fun WaitingScreen(gameId: String) {
+fun WaitingScreen(
+    onlineViewModel: OnlineViewModel,
+    gameId: String,
+    onNavigateToGame: () -> Unit
+) {
     val copy = remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
@@ -81,6 +87,13 @@ fun WaitingScreen(gameId: String) {
                 CopyToClipboard(gameId)
                 copy.value = false
             }
+
+            onlineViewModel.listenForRoomUpdates {
+                if (onlineViewModel.room.value.gameStatus == GameStatus.JOINED) {
+                    onNavigateToGame()
+                }
+            }
+
         }
     }
 }

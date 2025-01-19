@@ -17,6 +17,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,20 +32,32 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aecoding.tictactoecompose.presentation.utils.ButtonText
 import com.aecoding.tictactoecompose.presentation.utils.HeaderText
 import com.aecoding.tictactoecompose.presentation.utils.buttonShadow
+import com.aecoding.tictactoecompose.presentation.viewmodel.OnlineViewModel
 import com.aecoding.tictactoecompose.ui.theme.BlueShadowColor
 import com.aecoding.tictactoecompose.ui.theme.MainBg
 import com.aecoding.tictactoecompose.ui.theme.Orbitron
 import com.aecoding.tictactoecompose.ui.theme.PlaceholderColor
 
 @Composable
-fun JoinRoomScreen() {
+fun JoinRoomScreen(
+    onlineViewModel: OnlineViewModel,
+    onNavigateToGame: () -> Unit
+) {
 
     val name = remember { mutableStateOf("") }
     val roomId = remember { mutableStateOf("") }
     var isEmpty by remember { mutableStateOf(false) }
+    val checkId by onlineViewModel.loading.collectAsStateWithLifecycle(true)
+
+    LaunchedEffect(roomId.value) {
+        if (roomId.value.isNotEmpty()) {
+            onlineViewModel.loadRoom(roomId.value)
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -146,6 +159,12 @@ fun JoinRoomScreen() {
                         text = "Name can't be empty",
                         color = MaterialTheme.colorScheme.error
                     )
+                } else if (!checkId) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = "Id is incorrect!",
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
             },
             placeholder = {
@@ -170,9 +189,16 @@ fun JoinRoomScreen() {
         Button(
             onClick = {
                 isEmpty = name.value.isEmpty() && roomId.value.isEmpty()
-
-                if (!isEmpty){ }
-                      },
+                if (!isEmpty) {
+                    if (onlineViewModel.loading.value) {
+                        onlineViewModel.joinRoom(
+                            roomId = roomId.value,
+                            playerTwo = name.value
+                        )
+                        onNavigateToGame()
+                    }
+                }
+            },
             modifier = Modifier
                 .padding(10.dp)
                 .fillMaxWidth()

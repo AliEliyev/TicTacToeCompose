@@ -11,11 +11,13 @@ import com.aecoding.tictactoecompose.presentation.screen.JoinRoomScreen
 import com.aecoding.tictactoecompose.presentation.screen.MainScreen
 import com.aecoding.tictactoecompose.presentation.screen.WaitingScreen
 import com.aecoding.tictactoecompose.presentation.viewmodel.GameViewModel
+import com.aecoding.tictactoecompose.presentation.viewmodel.OnlineViewModel
 
 @Composable
 fun Navigation(
     navController: NavController,
     gameViewModel: GameViewModel,
+    onlineViewModel: OnlineViewModel
 ) {
     NavHost(
         navController = navController as NavHostController,
@@ -35,12 +37,22 @@ fun Navigation(
         }
         composable(Screen.CreateRoomScreen.route) {
             CreateRoomScreen(
+                onlineViewModel = onlineViewModel,
                 onNavigateToWaiting = {navController.navigate("${Screen.WaitingScreen.route}/${it}")}
             )
         }
         composable("${ Screen.WaitingScreen.route }/{gameId}") {
             val gameId: String = it.arguments?.getString("gameId") ?: "-1"
-            WaitingScreen(gameId) }
-        composable(Screen.JoinRoomScreen.route) { JoinRoomScreen() }
+            WaitingScreen(
+                onlineViewModel = onlineViewModel,
+                gameId = gameId,
+                onNavigateToGame = { navController.navigate(Screen.GameScreen.route )})
+        }
+        composable(Screen.JoinRoomScreen.route) {
+            JoinRoomScreen(
+                onlineViewModel = onlineViewModel,
+                onNavigateToGame = {navController.navigate(Screen.GameScreen.route)}
+            )
+        }
     }
 }

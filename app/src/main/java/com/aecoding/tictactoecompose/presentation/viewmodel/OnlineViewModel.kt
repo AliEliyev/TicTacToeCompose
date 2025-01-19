@@ -1,6 +1,5 @@
 package com.aecoding.tictactoecompose.presentation.viewmodel
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aecoding.tictactoecompose.data.OnlineRepository
 import com.aecoding.tictactoecompose.data.Result
@@ -14,8 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class OnlineViewModel : ViewModel
-    () {
+class OnlineViewModel : GameViewModel() {
     private val _room = MutableStateFlow(
         Room(
             gameState = GameState(
@@ -25,10 +23,11 @@ class OnlineViewModel : ViewModel
     )
     val room: StateFlow<Room> = _room
     private val onlineRepository: OnlineRepository by lazy {
-    val instance = FirebaseFirestore.getInstance()
-    OnlineRepository(instance)
-}
-
+        val instance = FirebaseFirestore.getInstance()
+        OnlineRepository(instance)
+    }
+    private val _loading = MutableStateFlow(true)
+    val loading: StateFlow<Boolean> = _loading
 
 
     fun createRoom(gameId: String, playerOne: String) {
@@ -48,30 +47,45 @@ class OnlineViewModel : ViewModel
         }
     }
 
-    fun joinRoom(gameId: String, playerTwo: String){
-        if (gameId == _room.value.roomId){
-            _room.value = _room.value.copy(
-                gameStatus = GameStatus.JOINED,
-                gameState = _room.value.gameState.copy(
-                    playerTwo = _room.value.gameState.playerTwo.copy(
-                        playerName = playerTwo
-                    )
+    fun joinRoom(roomId: String, playerTwo: String) {
+        _room.value = _room.value.copy(
+            roomId = roomId,
+            gameStatus = GameStatus.JOINED,
+            gameState = _room.value.gameState.copy(
+                playerTwo = _room.value.gameState.playerTwo.copy(
+                    playerName = playerTwo
                 )
             )
-            viewModelScope.launch {
-                onlineRepository.saveRoom(_room.value.toDto())
+        )
+        viewModelScope.launch {
+            onlineRepository.saveRoom(_room.value.toDto())
+        }
+    }
+
+    fun loadRoom(roomId: String) {
+        viewModelScope.launch {
+            when (val result = onlineRepository.fetchRoom(roomId)) {
+                is Result.Error -> _loading.value = false
+                is Result.Success -> {
+                    _room.value = result.data.toRoom()
+                    _loading.value = true
+                }
             }
         }
     }
 
-    fun loadRoom(){
-        viewModelScope.launch {
-            //_room.value = onlineRepository.fetchRoom(_room.value)
-            when(val result = onlineRepository.fetchRoom(_room.value)){
-                is Result.Error -> TODO()
-                is Result.Success -> _room.value = result.data.toRoom()
+    fun listenForRoomUpdates(onRoomUpdated: () -> Unit) {
+        onlineRepository.listenForRoomUpdates(
+            roomId = _room.value.roomId,
+            onRoomUpdated = { roomDto ->
+                _room.value = roomDto.toRoom()
+                onRoomUpdated()
             }
-        }
+        )
+    }
+
+    fun stopListeningForRoomUpdates() {
+        onlineRepository.stopListeningForRoomUpdates()
     }
 
 }

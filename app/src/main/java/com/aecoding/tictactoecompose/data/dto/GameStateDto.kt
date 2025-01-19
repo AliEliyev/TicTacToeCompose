@@ -1,13 +1,13 @@
 package com.aecoding.tictactoecompose.data.dto
 
-import com.aecoding.tictactoecompose.domain.entities.GameEffect
-import com.aecoding.tictactoecompose.domain.entities.Player
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class GameStateDto(
-    var board: List<String>,
-    var playerOne: PlayerDto,
-    var playerTwo: PlayerDto,
+    var board: List<String> = listOf(""),
+    var playerOne: PlayerDto = PlayerDto(),
+    var playerTwo: PlayerDto = PlayerDto(),
     var currentPlayer: PlayerDto = playerOne,
     var winner: String = currentPlayer.playerName,
-    var gameEffect: String? = null
+    var gameEffect: String = ""
 )

@@ -7,7 +7,7 @@ import com.aecoding.tictactoecompose.domain.entities.GameState
 import com.aecoding.tictactoecompose.domain.entities.Player
 import com.aecoding.tictactoecompose.domain.entities.Room
 
-fun Player.toDto():PlayerDto{
+fun Player.toDto(): PlayerDto {
     return PlayerDto(
         playerName = playerName,
         score = score,
@@ -15,14 +15,14 @@ fun Player.toDto():PlayerDto{
     )
 }
 
-fun List<List<Char>>.toDto(): List<String>{
+fun List<List<Char>>.toDto(): List<String> {
     val list = this.mapIndexed { _, rowList ->
         rowList.toString()
-     }
+    }
     return list
 }
 
-fun GameState.toDto(): GameStateDto{
+fun GameState.toDto(): GameStateDto {
     return GameStateDto(
         board = board.toDto(),
         playerOne = playerOne.toDto(),
@@ -31,7 +31,7 @@ fun GameState.toDto(): GameStateDto{
     )
 }
 
-fun Room.toDto(): RoomDto{
+fun Room.toDto(): RoomDto {
     return RoomDto(
         roomId = roomId,
         gameStatus = gameStatus.toString(),

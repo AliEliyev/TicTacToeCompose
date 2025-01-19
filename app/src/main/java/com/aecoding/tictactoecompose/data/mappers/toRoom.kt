@@ -38,7 +38,7 @@ fun GameStateDto.toGameState(): GameState {
         board = board.toNestedArr(),
         playerOne = playerOne.toPlayer(),
         playerTwo = playerTwo.toPlayer(),
-        gameEffect = gameEffect?.toGameEffect()
+        gameEffect = gameEffect.toGameEffect()
     )
 }
 
@@ -56,6 +56,6 @@ fun RoomDto.toRoom(): Room {
     return Room(
         roomId = roomId,
         gameStatus =gameStatus.toGameStatus(),
-        gameState = gameState.toGameState()
+        gameState = gameState!!.toGameState()
     )
 }
