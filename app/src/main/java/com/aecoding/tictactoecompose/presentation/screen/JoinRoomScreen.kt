@@ -17,7 +17,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,7 +35,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aecoding.tictactoecompose.presentation.utils.ButtonText
 import com.aecoding.tictactoecompose.presentation.utils.HeaderText
 import com.aecoding.tictactoecompose.presentation.utils.buttonShadow
-import com.aecoding.tictactoecompose.presentation.viewmodel.OnlineViewModel
+import com.aecoding.tictactoecompose.presentation.viewmodel.JoinViewModel
 import com.aecoding.tictactoecompose.ui.theme.BlueShadowColor
 import com.aecoding.tictactoecompose.ui.theme.MainBg
 import com.aecoding.tictactoecompose.ui.theme.Orbitron
@@ -44,20 +43,15 @@ import com.aecoding.tictactoecompose.ui.theme.PlaceholderColor
 
 @Composable
 fun JoinRoomScreen(
-    onlineViewModel: OnlineViewModel,
+    joinViewModel: JoinViewModel,
     onNavigateToGame: () -> Unit
 ) {
-
     val name = remember { mutableStateOf("") }
     val roomId = remember { mutableStateOf("") }
     var isEmpty by remember { mutableStateOf(false) }
-    val checkId by onlineViewModel.loading.collectAsStateWithLifecycle(true)
 
-    LaunchedEffect(roomId.value) {
-        if (roomId.value.isNotEmpty()) {
-            onlineViewModel.loadRoom(roomId.value)
-        }
-    }
+    val checkId by joinViewModel.isValidId.collectAsStateWithLifecycle(true)
+
 
     Column(
         modifier = Modifier
@@ -190,8 +184,8 @@ fun JoinRoomScreen(
             onClick = {
                 isEmpty = name.value.isEmpty() && roomId.value.isEmpty()
                 if (!isEmpty) {
-                    if (onlineViewModel.loading.value) {
-                        onlineViewModel.joinRoom(
+                    if (checkId) {
+                        joinViewModel.joinRoom(
                             roomId = roomId.value,
                             playerTwo = name.value
                         )

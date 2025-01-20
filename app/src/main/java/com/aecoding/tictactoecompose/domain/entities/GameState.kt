@@ -12,12 +12,12 @@ data class GameState(
     ),
     var currentPlayer: Player = playerOne,
     var winner: String = currentPlayer.playerName,
-    var gameEffect: GameEffect? = null
+    var dialogState: DialogState? = null
 )
 
 
-sealed class GameEffect {
-    data object ShowWinnerDialog : GameEffect()
-    data object ShowRoundDialog : GameEffect()
-    data object ShowDrawDialog : GameEffect()
+sealed class DialogState {
+    data object ShowWinnerDialog : DialogState()
+    data object ShowRoundDialog : DialogState()
+    data object ShowDrawDialog : DialogState()
 }

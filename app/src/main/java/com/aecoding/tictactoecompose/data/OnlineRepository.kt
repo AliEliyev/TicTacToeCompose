@@ -1,10 +1,13 @@
 package com.aecoding.tictactoecompose.data
 
+import android.util.Log
 import com.aecoding.tictactoecompose.data.dto.RoomDto
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 class OnlineRepository(private val firestore: FirebaseFirestore) {
@@ -50,7 +53,19 @@ class OnlineRepository(private val firestore: FirebaseFirestore) {
             }
     }
 
-    fun stopListeningForRoomUpdates() {
-        roomListener?.remove()
+    fun getRoomFlow(roomId: String): Flow<Result<RoomDto>> = callbackFlow {
+           roomListener = firestore.collection("rooms")
+               .document(roomId)
+               .addSnapshotListener { snapshot, error ->
+                   if (error != null) {
+                       trySend(Result.Error(error))
+                   }
+                   if (snapshot != null && snapshot.exists()) {
+                       val room = snapshot.toObject(RoomDto::class.java)
+                       if (room != null) {
+                           trySend(Result.Success(room))
+                       }
+                   }
+               }
     }
 }

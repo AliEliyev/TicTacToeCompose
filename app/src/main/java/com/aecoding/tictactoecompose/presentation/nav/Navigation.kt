@@ -1,5 +1,6 @@
 package com.aecoding.tictactoecompose.presentation.nav
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -10,14 +11,18 @@ import com.aecoding.tictactoecompose.presentation.screen.GameScreen
 import com.aecoding.tictactoecompose.presentation.screen.JoinRoomScreen
 import com.aecoding.tictactoecompose.presentation.screen.MainScreen
 import com.aecoding.tictactoecompose.presentation.screen.WaitingScreen
+import com.aecoding.tictactoecompose.presentation.viewmodel.CreateViewModel
 import com.aecoding.tictactoecompose.presentation.viewmodel.GameViewModel
-import com.aecoding.tictactoecompose.presentation.viewmodel.OnlineViewModel
+import com.aecoding.tictactoecompose.presentation.viewmodel.JoinViewModel
+import com.aecoding.tictactoecompose.presentation.viewmodel.WaitingViewModel
 
 @Composable
 fun Navigation(
     navController: NavController,
     gameViewModel: GameViewModel,
-    onlineViewModel: OnlineViewModel
+    createViewModel: CreateViewModel,
+    joinViewModel: JoinViewModel,
+    waitingViewModel: WaitingViewModel
 ) {
     NavHost(
         navController = navController as NavHostController,
@@ -37,21 +42,22 @@ fun Navigation(
         }
         composable(Screen.CreateRoomScreen.route) {
             CreateRoomScreen(
-                onlineViewModel = onlineViewModel,
-                onNavigateToWaiting = {navController.navigate("${Screen.WaitingScreen.route}/${it}")}
+                createViewModel = createViewModel,
+                onNavigateToWaiting = { navController.navigate("${Screen.WaitingScreen.route}/${it}") }
             )
         }
-        composable("${ Screen.WaitingScreen.route }/{gameId}") {
-            val gameId: String = it.arguments?.getString("gameId") ?: "-1"
-            WaitingScreen(
-                onlineViewModel = onlineViewModel,
-                gameId = gameId,
-                onNavigateToGame = { navController.navigate(Screen.GameScreen.route )})
+        composable("${Screen.WaitingScreen.route}/{gameId}") {
+               val gameId: String = it.arguments?.getString("gameId") ?: "-1"
+               WaitingScreen(
+                   createViewModel = createViewModel,
+                   gameId = gameId,
+                   onNavigateToGame = { navController.navigate(Screen.GameScreen.route) })
+
         }
         composable(Screen.JoinRoomScreen.route) {
             JoinRoomScreen(
-                onlineViewModel = onlineViewModel,
-                onNavigateToGame = {navController.navigate(Screen.GameScreen.route)}
+                joinViewModel = joinViewModel,
+                onNavigateToGame = { navController.navigate(Screen.GameScreen.route) }
             )
         }
     }

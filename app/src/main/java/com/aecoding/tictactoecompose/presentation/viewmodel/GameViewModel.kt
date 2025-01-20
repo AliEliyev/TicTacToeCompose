@@ -1,7 +1,7 @@
 package com.aecoding.tictactoecompose.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.aecoding.tictactoecompose.domain.entities.GameEffect
+import com.aecoding.tictactoecompose.domain.entities.DialogState
 import com.aecoding.tictactoecompose.domain.entities.GameState
 import com.aecoding.tictactoecompose.presentation.utils.check
 import com.aecoding.tictactoecompose.presentation.utils.isBoardFull
@@ -36,24 +36,24 @@ open class GameViewModel : ViewModel() {
 
             if (_gameState.value.playerOne.score == 3) {
                 _gameState.value = _gameState.value.copy(
-                    gameEffect = GameEffect.ShowWinnerDialog
+                    dialogState = DialogState.ShowWinnerDialog
                 )
                 resetBoard()
             } else if (_gameState.value.playerTwo.score == 3) {
                 _gameState.value = _gameState.value.copy(
-                    gameEffect = GameEffect.ShowWinnerDialog
+                    dialogState = DialogState.ShowWinnerDialog
                 )
                 resetBoard()
 
             } else {
                 resetBoard()
                 _gameState.value = _gameState.value.copy(
-                    gameEffect = GameEffect.ShowRoundDialog
+                    dialogState = DialogState.ShowRoundDialog
                 )
             }
         } else if (isBoardFull()) {
             _gameState.value = _gameState.value.copy(
-                gameEffect = GameEffect.ShowDrawDialog
+                dialogState = DialogState.ShowDrawDialog
             )
             resetBoard()
         }
@@ -61,7 +61,7 @@ open class GameViewModel : ViewModel() {
 
     fun resetEffect() {
         _gameState.value = _gameState.value.copy(
-            gameEffect = null
+            dialogState = null
         )
     }
 

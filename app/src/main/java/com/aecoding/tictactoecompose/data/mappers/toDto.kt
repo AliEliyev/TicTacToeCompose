@@ -27,7 +27,7 @@ fun GameState.toDto(): GameStateDto {
         board = board.toDto(),
         playerOne = playerOne.toDto(),
         playerTwo = playerTwo.toDto(),
-        gameEffect = gameEffect.toString()
+        gameEffect = dialogState.toString()
     )
 }
 

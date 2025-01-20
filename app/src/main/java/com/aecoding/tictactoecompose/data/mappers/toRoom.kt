@@ -3,7 +3,7 @@ package com.aecoding.tictactoecompose.data.mappers
 import com.aecoding.tictactoecompose.data.dto.GameStateDto
 import com.aecoding.tictactoecompose.data.dto.PlayerDto
 import com.aecoding.tictactoecompose.data.dto.RoomDto
-import com.aecoding.tictactoecompose.domain.entities.GameEffect
+import com.aecoding.tictactoecompose.domain.entities.DialogState
 import com.aecoding.tictactoecompose.domain.entities.GameState
 import com.aecoding.tictactoecompose.domain.entities.GameStatus
 import com.aecoding.tictactoecompose.domain.entities.Player
@@ -24,11 +24,11 @@ fun List<String>.toNestedArr(): List<List<Char>> {
     return list
 }
 
-fun String.toGameEffect(): GameEffect? {
+fun String.toGameEffect(): DialogState? {
     return when (this) {
-        "GameEffect.ShowWinnerDialog" -> GameEffect.ShowWinnerDialog
-        "GameEffect.ShowDrawDialog" -> GameEffect.ShowDrawDialog
-        "GameEffect.ShowRoundDialog" -> GameEffect.ShowRoundDialog
+        "GameEffect.ShowWinnerDialog" -> DialogState.ShowWinnerDialog
+        "GameEffect.ShowDrawDialog" -> DialogState.ShowDrawDialog
+        "GameEffect.ShowRoundDialog" -> DialogState.ShowRoundDialog
         else -> null
     }
 }
@@ -38,7 +38,7 @@ fun GameStateDto.toGameState(): GameState {
         board = board.toNestedArr(),
         playerOne = playerOne.toPlayer(),
         playerTwo = playerTwo.toPlayer(),
-        gameEffect = gameEffect.toGameEffect()
+        dialogState = gameEffect.toGameEffect()
     )
 }
 

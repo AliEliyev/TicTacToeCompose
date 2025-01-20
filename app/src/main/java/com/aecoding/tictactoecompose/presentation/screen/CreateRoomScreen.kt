@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import com.aecoding.tictactoecompose.presentation.utils.ButtonText
 import com.aecoding.tictactoecompose.presentation.utils.HeaderText
 import com.aecoding.tictactoecompose.presentation.utils.buttonShadow
+import com.aecoding.tictactoecompose.presentation.viewmodel.CreateViewModel
 import com.aecoding.tictactoecompose.presentation.viewmodel.OnlineViewModel
 import com.aecoding.tictactoecompose.ui.theme.BlueShadowColor
 import com.aecoding.tictactoecompose.ui.theme.MainBg
@@ -43,7 +44,7 @@ import kotlin.random.nextInt
 
 @Composable
 fun CreateRoomScreen(
-    onlineViewModel: OnlineViewModel,
+    createViewModel: CreateViewModel,
     onNavigateToWaiting: (String) -> Unit
 ) {
     val text = remember { mutableStateOf("") }
@@ -132,7 +133,7 @@ fun CreateRoomScreen(
                 isEmpty = text.value.isEmpty()
                 if (!isEmpty) {
                     val gameId = Random.nextInt(1000000..9999999).toString()
-                    onlineViewModel.createRoom(gameId, text.value)
+                    createViewModel.createRoom(gameId, text.value)
                     onNavigateToWaiting(gameId)
                 }
             },

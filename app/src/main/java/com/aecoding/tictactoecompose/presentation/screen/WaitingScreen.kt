@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -26,20 +27,31 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aecoding.tictactoecompose.R
 import com.aecoding.tictactoecompose.domain.entities.GameStatus
 import com.aecoding.tictactoecompose.presentation.utils.ButtonText
-import com.aecoding.tictactoecompose.presentation.viewmodel.OnlineViewModel
+import com.aecoding.tictactoecompose.presentation.viewmodel.CreateViewModel
+import com.aecoding.tictactoecompose.presentation.viewmodel.WaitingViewModel
 import com.aecoding.tictactoecompose.ui.theme.BlueShadowColor
 import com.aecoding.tictactoecompose.ui.theme.MainBg
 
 @Composable
 fun WaitingScreen(
-    onlineViewModel: OnlineViewModel,
+    createViewModel: CreateViewModel,
     gameId: String,
     onNavigateToGame: () -> Unit
 ) {
     val copy = remember { mutableStateOf(false) }
+    val state = createViewModel.room.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        createViewModel.listenForRoomUpdates()
+        if (state.value.gameStatus == GameStatus.JOINED) {
+            onNavigateToGame()
+        }
+    }
+
     Column(
         modifier = Modifier
             .background(color = MainBg)
@@ -87,13 +99,6 @@ fun WaitingScreen(
                 CopyToClipboard(gameId)
                 copy.value = false
             }
-
-            onlineViewModel.listenForRoomUpdates {
-                if (onlineViewModel.room.value.gameStatus == GameStatus.JOINED) {
-                    onNavigateToGame()
-                }
-            }
-
         }
     }
 }

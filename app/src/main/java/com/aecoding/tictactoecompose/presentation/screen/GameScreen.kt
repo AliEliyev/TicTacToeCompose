@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.aecoding.tictactoecompose.domain.entities.GameEffect
+import com.aecoding.tictactoecompose.domain.entities.DialogState
 import com.aecoding.tictactoecompose.presentation.viewmodel.GameViewModel
 import com.aecoding.tictactoecompose.ui.theme.MainBg
 
@@ -79,8 +79,8 @@ fun GameScreen(
                 }
             }
         }
-        when (gameState.value.gameEffect) {
-            GameEffect.ShowWinnerDialog -> {
+        when (gameState.value.dialogState) {
+            DialogState.ShowWinnerDialog -> {
                 GameWinDialog(
                     showDialog = true,
                     winner = gameState.value.winner,
@@ -91,7 +91,7 @@ fun GameScreen(
                 )
             }
 
-            GameEffect.ShowRoundDialog -> {
+            DialogState.ShowRoundDialog -> {
                 RoundWinDialog(
                     showDialog = true,
                     winner = gameState.value.winner,
@@ -99,7 +99,7 @@ fun GameScreen(
                 )
             }
 
-            GameEffect.ShowDrawDialog -> {
+            DialogState.ShowDrawDialog -> {
                 DrawScreen(
                     showDialog = true,
                     onClick = { viewModel.resetEffect() }
@@ -114,7 +114,7 @@ fun GameScreen(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "${gameState.value.currentPlayer.playerName} 's Turn",
+                text = "${gameState.value.currentPlayer.playerName}'s Turn",
                 fontSize = 25.sp,
                 lineHeight = 31.35.sp,
             )
