@@ -29,9 +29,17 @@ fun GameBox(
 ) {
     val color = remember { mutableStateOf(Color.White) }
     when (text) {
-        'X' -> {color.value = BlueShadowColor}
-        'O' -> {color.value = YellowShadowColor}
-        else -> {color.value = Color.White}
+        'X' -> {
+            color.value = BlueShadowColor
+        }
+
+        'O' -> {
+            color.value = YellowShadowColor
+        }
+
+        else -> {
+            color.value = Color.White
+        }
     }
     Box(
         modifier = Modifier
@@ -44,7 +52,7 @@ fun GameBox(
                 spotColor = color.value
             )
             .clickable {
-               onClick()
+                onClick()
             },
         contentAlignment = Alignment.Center
     ) {

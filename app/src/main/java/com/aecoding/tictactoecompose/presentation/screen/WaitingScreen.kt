@@ -28,25 +28,28 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aecoding.tictactoecompose.R
 import com.aecoding.tictactoecompose.domain.entities.GameStatus
 import com.aecoding.tictactoecompose.presentation.utils.ButtonText
-import com.aecoding.tictactoecompose.presentation.viewmodel.CreateViewModel
 import com.aecoding.tictactoecompose.presentation.viewmodel.WaitingViewModel
 import com.aecoding.tictactoecompose.ui.theme.BlueShadowColor
 import com.aecoding.tictactoecompose.ui.theme.MainBg
 
 @Composable
 fun WaitingScreen(
-    createViewModel: CreateViewModel,
-    gameId: String,
+    waitingViewModel: WaitingViewModel = viewModel(),
+    roomId: String,
     onNavigateToGame: () -> Unit
 ) {
     val copy = remember { mutableStateOf(false) }
-    val state = createViewModel.room.collectAsStateWithLifecycle()
+    val state = waitingViewModel.room.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        createViewModel.listenForRoomUpdates()
+        waitingViewModel.startListening(roomId)
+    }
+
+    LaunchedEffect(state.value.gameStatus) {
         if (state.value.gameStatus == GameStatus.JOINED) {
             onNavigateToGame()
         }
@@ -77,7 +80,7 @@ fun WaitingScreen(
             contentAlignment = Alignment.Center
         ) {
             ButtonText(
-                text = gameId,
+                text = roomId,
                 color = Color.White
             )
             IconButton(
@@ -96,7 +99,7 @@ fun WaitingScreen(
                 )
             }
             if (copy.value) {
-                CopyToClipboard(gameId)
+                CopyToClipboard(roomId)
                 copy.value = false
             }
         }

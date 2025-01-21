@@ -18,8 +18,8 @@ fun PlayerDto.toPlayer(): Player {
 }
 
 fun List<String>.toNestedArr(): List<List<Char>> {
-    val list = this.mapIndexed { _, s ->
-        s.toList()
+    val list = this.map {
+        it.toList()
     }
     return list
 }
@@ -44,10 +44,10 @@ fun GameStateDto.toGameState(): GameState {
 
 fun String.toGameStatus(): GameStatus {
     return when (this) {
-        "GameStatus.OFFLINE" -> GameStatus.OFFLINE
-        "GameStatus.CREATED" -> GameStatus.CREATED
-        "GameStatus.JOINED" -> GameStatus.JOINED
-        "GameStatus.FINISHED" -> GameStatus.FINISHED
+        "OFFLINE" -> GameStatus.OFFLINE
+        "CREATED" -> GameStatus.CREATED
+        "JOINED" -> GameStatus.JOINED
+        "FINISHED" -> GameStatus.FINISHED
         else -> GameStatus.OFFLINE
     }
 }
@@ -55,7 +55,7 @@ fun String.toGameStatus(): GameStatus {
 fun RoomDto.toRoom(): Room {
     return Room(
         roomId = roomId,
-        gameStatus =gameStatus.toGameStatus(),
+        gameStatus = gameStatus.toGameStatus(),
         gameState = gameState!!.toGameState()
     )
 }

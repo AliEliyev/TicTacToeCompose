@@ -16,10 +16,10 @@ fun Player.toDto(): PlayerDto {
 }
 
 fun List<List<Char>>.toDto(): List<String> {
-    val list = this.mapIndexed { _, rowList ->
-        rowList.toString()
+    val stringList: List<String> = this.map {
+        it.joinToString("")
     }
-    return list
+    return stringList
 }
 
 fun GameState.toDto(): GameStateDto {

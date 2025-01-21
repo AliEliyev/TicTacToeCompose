@@ -4,7 +4,6 @@ data class Room(
     var roomId: String = "-1",
     var gameStatus: GameStatus = GameStatus.OFFLINE,
     var gameState: GameState,
-    var isLoading: Boolean = false
 )
 
 enum class GameStatus {
@@ -12,4 +11,10 @@ enum class GameStatus {
     CREATED,
     JOINED,
     FINISHED
+}
+
+enum class GameEffect {
+    WRONGID,
+    NAVIGATE,
+    NULL
 }

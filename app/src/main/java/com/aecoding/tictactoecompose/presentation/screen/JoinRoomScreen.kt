@@ -17,6 +17,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,6 +33,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.aecoding.tictactoecompose.domain.entities.GameEffect
 import com.aecoding.tictactoecompose.presentation.utils.ButtonText
 import com.aecoding.tictactoecompose.presentation.utils.HeaderText
 import com.aecoding.tictactoecompose.presentation.utils.buttonShadow
@@ -43,14 +46,24 @@ import com.aecoding.tictactoecompose.ui.theme.PlaceholderColor
 
 @Composable
 fun JoinRoomScreen(
-    joinViewModel: JoinViewModel,
+    joinViewModel: JoinViewModel = viewModel(),
     onNavigateToGame: () -> Unit
 ) {
     val name = remember { mutableStateOf("") }
     val roomId = remember { mutableStateOf("") }
     var isEmpty by remember { mutableStateOf(false) }
 
+
+    //! ViewModel
+    val effect by joinViewModel.gameEffect.collectAsStateWithLifecycle()
     val checkId by joinViewModel.isValidId.collectAsStateWithLifecycle(true)
+
+    LaunchedEffect(effect) {
+        if (effect == GameEffect.NAVIGATE){
+            joinViewModel.joinRoom(roomId.value,name.value)
+            onNavigateToGame()
+        }
+    }
 
 
     Column(
@@ -128,12 +141,13 @@ fun JoinRoomScreen(
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = BlueShadowColor,
                 unfocusedBorderColor = BlueShadowColor.copy(alpha = 0.5f),
-            )
+            ),
+            singleLine = true
         )
 
         OutlinedTextField(
             value = roomId.value,
-            onValueChange = { roomId.value = it },
+            onValueChange = { if (it.length <= 7) roomId.value = it },
             modifier = Modifier
                 .padding(10.dp)
                 .fillMaxWidth(),
@@ -177,20 +191,15 @@ fun JoinRoomScreen(
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = BlueShadowColor,
                 unfocusedBorderColor = BlueShadowColor.copy(alpha = 0.5f),
-            )
+            ),
+            singleLine = true
         )
 
         Button(
             onClick = {
                 isEmpty = name.value.isEmpty() && roomId.value.isEmpty()
                 if (!isEmpty) {
-                    if (checkId) {
-                        joinViewModel.joinRoom(
-                            roomId = roomId.value,
-                            playerTwo = name.value
-                        )
-                        onNavigateToGame()
-                    }
+                    joinViewModel.idChecker(roomId = roomId.value)
                 }
             },
             modifier = Modifier

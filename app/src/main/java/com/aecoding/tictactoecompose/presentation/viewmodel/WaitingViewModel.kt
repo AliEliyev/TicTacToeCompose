@@ -10,11 +10,14 @@ import com.aecoding.tictactoecompose.domain.entities.GameState
 import com.aecoding.tictactoecompose.domain.entities.Room
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class WaitingViewModel(
-    private val repository: OnlineRepository= OnlineRepository(Injection.instance())
+    private val repository: OnlineRepository = OnlineRepository(Injection.instance())
 ) : ViewModel() {
+
     private val _room = MutableStateFlow(
         Room(
             gameState = GameState(
@@ -24,6 +27,22 @@ class WaitingViewModel(
     )
     val room: StateFlow<Room> = _room
 
+    fun startListening(roomId: String) {
+        viewModelScope.launch { listenForRoomUpdates(roomId) }
+    }
 
 
+    private fun listenForRoomUpdates(roomId: String) {
+        repository.getRoomFlow(roomId).onEach { result ->
+            when (result) {
+                is Result.Success -> {
+                    _room.value = result.data.toRoom()
+                }
+
+                is Result.Error -> {
+
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
 }

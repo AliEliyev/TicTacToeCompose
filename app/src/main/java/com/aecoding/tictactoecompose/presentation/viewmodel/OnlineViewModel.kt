@@ -1,6 +1,5 @@
 package com.aecoding.tictactoecompose.presentation.viewmodel
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aecoding.tictactoecompose.data.OnlineRepository
 import com.aecoding.tictactoecompose.data.Result
@@ -14,7 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class OnlineViewModel : ViewModel() {
+class OnlineViewModel : OfflineGameViewModel() {
     private val _room = MutableStateFlow(
         Room(
             gameState = GameState(

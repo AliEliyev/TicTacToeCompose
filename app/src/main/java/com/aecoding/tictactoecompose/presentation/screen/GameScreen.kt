@@ -16,13 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aecoding.tictactoecompose.domain.entities.DialogState
-import com.aecoding.tictactoecompose.presentation.viewmodel.GameViewModel
+import com.aecoding.tictactoecompose.presentation.viewmodel.OfflineGameViewModel
 import com.aecoding.tictactoecompose.ui.theme.MainBg
 
 @Composable
 fun GameScreen(
-    viewModel: GameViewModel,
+    viewModel: OfflineGameViewModel = viewModel(),
     onNavigateToMenu: () -> Unit,
 ) {
     val gameState = viewModel.gameState.collectAsStateWithLifecycle()
@@ -105,6 +106,7 @@ fun GameScreen(
                     onClick = { viewModel.resetEffect() }
                 )
             }
+
             null -> {}
         }
         Box(

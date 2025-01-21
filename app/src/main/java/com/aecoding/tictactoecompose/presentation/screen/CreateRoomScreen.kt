@@ -30,11 +30,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aecoding.tictactoecompose.presentation.utils.ButtonText
 import com.aecoding.tictactoecompose.presentation.utils.HeaderText
 import com.aecoding.tictactoecompose.presentation.utils.buttonShadow
 import com.aecoding.tictactoecompose.presentation.viewmodel.CreateViewModel
-import com.aecoding.tictactoecompose.presentation.viewmodel.OnlineViewModel
 import com.aecoding.tictactoecompose.ui.theme.BlueShadowColor
 import com.aecoding.tictactoecompose.ui.theme.MainBg
 import com.aecoding.tictactoecompose.ui.theme.Orbitron
@@ -44,7 +44,7 @@ import kotlin.random.nextInt
 
 @Composable
 fun CreateRoomScreen(
-    createViewModel: CreateViewModel,
+    createViewModel: CreateViewModel = viewModel(),
     onNavigateToWaiting: (String) -> Unit
 ) {
     val text = remember { mutableStateOf("") }
@@ -125,7 +125,8 @@ fun CreateRoomScreen(
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = BlueShadowColor,
                 unfocusedBorderColor = BlueShadowColor.copy(alpha = 0.5f),
-            )
+            ),
+            singleLine = true
         )
 
         Button(
