@@ -1,4 +1,4 @@
-package com.aecoding.tictactoecompose.presentation.screen
+package com.aecoding.tictactoecompose.core
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,15 +16,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aecoding.tictactoecompose.domain.entities.DialogState
-import com.aecoding.tictactoecompose.presentation.viewmodel.OfflineGameViewModel
+import com.aecoding.tictactoecompose.presentation.screen.DrawScreen
+import com.aecoding.tictactoecompose.presentation.screen.GameBox
+import com.aecoding.tictactoecompose.presentation.screen.GameWinDialog
+import com.aecoding.tictactoecompose.presentation.screen.RoundWinDialog
 import com.aecoding.tictactoecompose.ui.theme.MainBg
 
 @Composable
-fun GameScreen(
-    viewModel: OfflineGameViewModel = viewModel(),
-    onNavigateToMenu: () -> Unit,
+fun GameScreenComponents(
+    viewModel: BaseGameViewModel,
+    onNavigateToMenu: () -> Unit
 ) {
     val gameState = viewModel.gameState.collectAsStateWithLifecycle()
 
@@ -43,7 +45,7 @@ fun GameScreen(
                 .padding(vertical = 20.dp, horizontal = 10.dp)
                 .fillMaxWidth()
                 .height(100.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceAround
         ) {
             Column(
                 modifier = Modifier.height(60.dp),

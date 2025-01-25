@@ -26,9 +26,9 @@ fun List<String>.toNestedArr(): List<List<Char>> {
 
 fun String.toGameEffect(): DialogState? {
     return when (this) {
-        "GameEffect.ShowWinnerDialog" -> DialogState.ShowWinnerDialog
-        "GameEffect.ShowDrawDialog" -> DialogState.ShowDrawDialog
-        "GameEffect.ShowRoundDialog" -> DialogState.ShowRoundDialog
+        "ShowWinnerDialog" -> DialogState.ShowWinnerDialog
+        "ShowDrawDialog" -> DialogState.ShowDrawDialog
+        "ShowRoundDialog" -> DialogState.ShowRoundDialog
         else -> null
     }
 }
@@ -38,6 +38,8 @@ fun GameStateDto.toGameState(): GameState {
         board = board.toNestedArr(),
         playerOne = playerOne.toPlayer(),
         playerTwo = playerTwo.toPlayer(),
+        currentPlayer = currentPlayer.toPlayer(),
+        winner = winner,
         dialogState = gameEffect.toGameEffect()
     )
 }

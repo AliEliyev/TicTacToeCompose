@@ -40,7 +40,7 @@ import com.aecoding.tictactoecompose.ui.theme.MainBg
 fun WaitingScreen(
     waitingViewModel: WaitingViewModel = viewModel(),
     roomId: String,
-    onNavigateToGame: () -> Unit
+    onNavigateToGame: (String) -> Unit
 ) {
     val copy = remember { mutableStateOf(false) }
     val state = waitingViewModel.room.collectAsStateWithLifecycle()
@@ -51,7 +51,7 @@ fun WaitingScreen(
 
     LaunchedEffect(state.value.gameStatus) {
         if (state.value.gameStatus == GameStatus.JOINED) {
-            onNavigateToGame()
+            onNavigateToGame(roomId)
         }
     }
 

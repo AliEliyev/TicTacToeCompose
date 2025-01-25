@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
-class OnlineRepository(private val firestore: FirebaseFirestore) {
+class RoomRepository(private val firestore: FirebaseFirestore) {
 
     private var roomListener: ListenerRegistration? = null
 
@@ -34,23 +34,6 @@ class OnlineRepository(private val firestore: FirebaseFirestore) {
         Result.Success(fetchedRoom)
     } catch (e: Exception) {
         Result.Error(e)
-    }
-
-    fun listenForRoomUpdates(roomId: String, onRoomUpdated: (RoomDto) -> Unit) {
-        roomListener = firestore.collection("rooms")
-            .document(roomId)
-            .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    println("Error listening for room updates: ${error.message}")
-                    return@addSnapshotListener
-                }
-                if (snapshot != null && snapshot.exists()) {
-                    val room = snapshot.toObject(RoomDto::class.java)
-                    if (room != null) {
-                        onRoomUpdated(room)
-                    }
-                }
-            }
     }
 
     fun getRoomFlow(roomId: String): Flow<Result<RoomDto>> = callbackFlow {

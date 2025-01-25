@@ -3,7 +3,7 @@ package com.aecoding.tictactoecompose.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aecoding.tictactoecompose.data.Injection
-import com.aecoding.tictactoecompose.data.OnlineRepository
+import com.aecoding.tictactoecompose.data.RoomRepository
 import com.aecoding.tictactoecompose.data.Result
 import com.aecoding.tictactoecompose.data.mappers.toRoom
 import com.aecoding.tictactoecompose.domain.entities.GameState
@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class WaitingViewModel(
-    private val repository: OnlineRepository = OnlineRepository(Injection.instance())
+    private val repository: RoomRepository = RoomRepository(Injection.instance())
 ) : ViewModel() {
 
     private val _room = MutableStateFlow(

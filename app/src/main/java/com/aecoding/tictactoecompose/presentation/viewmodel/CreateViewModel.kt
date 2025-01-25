@@ -3,7 +3,7 @@ package com.aecoding.tictactoecompose.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aecoding.tictactoecompose.data.Injection
-import com.aecoding.tictactoecompose.data.OnlineRepository
+import com.aecoding.tictactoecompose.data.RoomRepository
 import com.aecoding.tictactoecompose.data.mappers.toDto
 import com.aecoding.tictactoecompose.domain.entities.GameState
 import com.aecoding.tictactoecompose.domain.entities.GameStatus
@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class CreateViewModel(
-    private val repository: OnlineRepository = OnlineRepository(Injection.instance())
+    private val repository: RoomRepository = RoomRepository(Injection.instance())
 ) : ViewModel() {
     private val _room = MutableStateFlow(
         Room(
@@ -32,7 +32,10 @@ class CreateViewModel(
                 gameState = _room.value.gameState.copy(
                     playerOne = _room.value.gameState.playerOne.copy(
                         playerName = playerOne
-                    )
+                    ),
+                    currentPlayer = _room.value.gameState.currentPlayer.copy(
+                        playerName = playerOne
+                    ),
                 )
             )
             viewModelScope.launch {

@@ -47,7 +47,7 @@ import com.aecoding.tictactoecompose.ui.theme.PlaceholderColor
 @Composable
 fun JoinRoomScreen(
     joinViewModel: JoinViewModel = viewModel(),
-    onNavigateToGame: () -> Unit
+    onNavigateToGame: (String) -> Unit
 ) {
     val name = remember { mutableStateOf("") }
     val roomId = remember { mutableStateOf("") }
@@ -59,9 +59,9 @@ fun JoinRoomScreen(
     val checkId by joinViewModel.isValidId.collectAsStateWithLifecycle(true)
 
     LaunchedEffect(effect) {
-        if (effect == GameEffect.NAVIGATE){
-            joinViewModel.joinRoom(roomId.value,name.value)
-            onNavigateToGame()
+        if (effect == GameEffect.NAVIGATE) {
+            joinViewModel.joinRoom(roomId.value, name.value)
+            onNavigateToGame(roomId.value)
         }
     }
 
