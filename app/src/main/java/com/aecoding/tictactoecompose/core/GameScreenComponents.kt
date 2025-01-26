@@ -88,7 +88,6 @@ fun GameScreenComponents(
                     showDialog = true,
                     winner = gameState.value.winner,
                     onClick = {
-                        onNavigateToMenu()
                         viewModel.resetGame()
                     }
                 )
@@ -108,7 +107,10 @@ fun GameScreenComponents(
                     onClick = { viewModel.resetEffect() }
                 )
             }
-
+            DialogState.BackToTheMenu -> {
+                viewModel.resetEffect()
+                onNavigateToMenu()
+            }
             null -> {}
         }
         Box(

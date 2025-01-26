@@ -10,10 +10,10 @@ import com.aecoding.tictactoecompose.presentation.viewmodel.OnlineGameViewModel
 fun OnlineGameScreen(
     viewModel: OnlineGameViewModel = viewModel(),
     roomId: String,
+    player: String,
     onNavigateToMenu: () -> Unit
 ) {
-    viewModel.getState(roomId)
-
+    viewModel.getState(roomId,player)
     LaunchedEffect(Unit) {
         viewModel.startListening(roomId)
     }

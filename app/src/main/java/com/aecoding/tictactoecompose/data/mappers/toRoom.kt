@@ -29,6 +29,7 @@ fun String.toGameEffect(): DialogState? {
         "ShowWinnerDialog" -> DialogState.ShowWinnerDialog
         "ShowDrawDialog" -> DialogState.ShowDrawDialog
         "ShowRoundDialog" -> DialogState.ShowRoundDialog
+        "BackToTheMenu" -> DialogState.BackToTheMenu
         else -> null
     }
 }
@@ -40,7 +41,7 @@ fun GameStateDto.toGameState(): GameState {
         playerTwo = playerTwo.toPlayer(),
         currentPlayer = currentPlayer.toPlayer(),
         winner = winner,
-        dialogState = gameEffect.toGameEffect()
+        dialogState = dialogState.toGameEffect()
     )
 }
 

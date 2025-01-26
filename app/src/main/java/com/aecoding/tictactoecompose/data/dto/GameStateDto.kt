@@ -9,5 +9,5 @@ data class GameStateDto(
     var playerTwo: PlayerDto = PlayerDto(),
     var currentPlayer: PlayerDto = playerOne,
     var winner: String = currentPlayer.playerName,
-    var gameEffect: String = ""
+    var dialogState: String = ""
 )

@@ -20,4 +20,5 @@ sealed class DialogState {
     data object ShowWinnerDialog : DialogState()
     data object ShowRoundDialog : DialogState()
     data object ShowDrawDialog : DialogState()
+    data object BackToTheMenu : DialogState()
 }

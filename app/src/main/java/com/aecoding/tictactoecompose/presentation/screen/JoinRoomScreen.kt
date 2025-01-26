@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -19,9 +20,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -29,12 +30,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aecoding.tictactoecompose.domain.entities.GameEffect
+import com.aecoding.tictactoecompose.domain.entities.TypeError
 import com.aecoding.tictactoecompose.presentation.utils.ButtonText
 import com.aecoding.tictactoecompose.presentation.utils.HeaderText
 import com.aecoding.tictactoecompose.presentation.utils.buttonShadow
@@ -51,12 +55,12 @@ fun JoinRoomScreen(
 ) {
     val name = remember { mutableStateOf("") }
     val roomId = remember { mutableStateOf("") }
-    var isEmpty by remember { mutableStateOf(false) }
-
+    //var isEmpty by remember { mutableStateOf(false) }
+    val typeErrors = remember { mutableStateListOf<TypeError>() }
 
     //! ViewModel
     val effect by joinViewModel.gameEffect.collectAsStateWithLifecycle()
-    val checkId by joinViewModel.isValidId.collectAsStateWithLifecycle(true)
+    val roomErrors by joinViewModel.roomErrors.collectAsStateWithLifecycle()
 
     LaunchedEffect(effect) {
         if (effect == GameEffect.NAVIGATE) {
@@ -116,15 +120,6 @@ fun JoinRoomScreen(
                 textAlign = TextAlign.Center,
                 color = Color.White
             ),
-            supportingText = {
-                if (isEmpty) {
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = "Name can't be empty",
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-            },
             placeholder = {
                 Box(
                     modifier = Modifier
@@ -161,20 +156,29 @@ fun JoinRoomScreen(
                 color = Color.White
             ),
             supportingText = {
-                if (isEmpty) {
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = "Name can't be empty",
-                        color = MaterialTheme.colorScheme.error
-                    )
-                } else if (!checkId) {
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = "Id is incorrect!",
-                        color = MaterialTheme.colorScheme.error
-                    )
+                if (typeErrors.isNotEmpty()) {
+                    Column {
+                        typeErrors.forEach { error ->
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = error.text,
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    }
+                } else if (roomErrors.isNotEmpty()) {
+                    Column {
+                        roomErrors.forEach { error ->
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = error.text,
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    }
                 }
             },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             placeholder = {
                 Box(
                     modifier = Modifier
@@ -197,10 +201,34 @@ fun JoinRoomScreen(
 
         Button(
             onClick = {
-                isEmpty = name.value.isEmpty() && roomId.value.isEmpty()
-                if (!isEmpty) {
+                if ((name.value.isEmpty() || roomId.value.isEmpty()) && !typeErrors.contains(
+                        TypeError.EMPTY_INPUT
+                    )
+                ) {
+                    typeErrors += TypeError.EMPTY_INPUT
+                } else if (!(name.value.isEmpty() || roomId.value.isEmpty()) && typeErrors.contains(
+                        TypeError.EMPTY_INPUT
+                    )
+                ) {
+                    typeErrors -= TypeError.EMPTY_INPUT
+                }
+
+                if (roomId.value.length < 7 && !typeErrors.contains(TypeError.ID_TOO_SHORT)) {
+                    typeErrors += TypeError.ID_TOO_SHORT
+                } else if (roomId.value.length == 7 && typeErrors.contains(TypeError.ID_TOO_SHORT)) {
+                    typeErrors -= TypeError.ID_TOO_SHORT
+                }
+
+                if (!roomId.value.isDigitsOnly() && !typeErrors.contains(TypeError.ID_NOT_NUMERIC)) {
+                    typeErrors += TypeError.ID_NOT_NUMERIC
+                } else if (roomId.value.isDigitsOnly() && typeErrors.contains(TypeError.ID_NOT_NUMERIC)) {
+                    typeErrors -= TypeError.ID_NOT_NUMERIC
+                }
+
+                if (typeErrors.isEmpty()) {
                     joinViewModel.idChecker(roomId = roomId.value)
                 }
+
             },
             modifier = Modifier
                 .padding(10.dp)

@@ -31,10 +31,12 @@ fun Navigation(
             OfflineGameScreen(
                 onNavigateToMenu = { navController.navigate(Screen.MenuScreen.route) })
         }
-        composable("${Screen.OnlineGameScreen.route}/{roomId}") {
+        composable("${Screen.OnlineGameScreen.route}/{roomId}/{player}") {
             val roomId = it.arguments?.getString("roomId") ?: "-1"
+            val player =  it.arguments?.getString("player") ?: "-1"
             OnlineGameScreen(
                 roomId = roomId,
+                player = player,
                 onNavigateToMenu = { navController.navigate(Screen.MenuScreen.route) }
             )
         }
@@ -43,16 +45,20 @@ fun Navigation(
                 onNavigateToWaiting = { navController.navigate("${Screen.WaitingScreen.route}/${it}") }
             )
         }
-        composable("${Screen.WaitingScreen.route}/{roomId}") {
-            val roomId = it.arguments?.getString("roomId") ?: "-1"
+        composable("${Screen.WaitingScreen.route}/{roomId}") { navBackStackEntry ->
+            val roomId = navBackStackEntry.arguments?.getString("roomId") ?: "-1"
             WaitingScreen(
                 roomId = roomId,
-                onNavigateToGame = { navController.navigate("${Screen.OnlineGameScreen.route}/$it") })
+                onNavigateToGame = {
+                    navController.navigate("${Screen.OnlineGameScreen.route}/$it/1")
+                })
 
         }
         composable(Screen.JoinRoomScreen.route) {
             JoinRoomScreen(
-                onNavigateToGame = { navController.navigate("${Screen.OnlineGameScreen.route}/$it") }
+                onNavigateToGame = {
+                    navController.navigate("${Screen.OnlineGameScreen.route}/$it/2")
+                }
             )
         }
     }

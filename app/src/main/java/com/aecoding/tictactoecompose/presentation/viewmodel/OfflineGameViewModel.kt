@@ -94,7 +94,8 @@ open class OfflineGameViewModel : BaseGameViewModel() {
 
     override fun resetGame() {
         setState( GameState(
-            board = List(3) { List(3) { ' ' } }
+            board = List(3) { List(3) { ' ' } },
+            dialogState = DialogState.BackToTheMenu
         ))
     }
 

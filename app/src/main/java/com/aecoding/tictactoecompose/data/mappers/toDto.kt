@@ -29,7 +29,7 @@ fun GameState.toDto(): GameStateDto {
         playerTwo = playerTwo.toDto(),
         currentPlayer = currentPlayer.toDto(),
         winner = winner,
-        gameEffect = dialogState.toString()
+        dialogState = dialogState.toString()
     )
 }
 

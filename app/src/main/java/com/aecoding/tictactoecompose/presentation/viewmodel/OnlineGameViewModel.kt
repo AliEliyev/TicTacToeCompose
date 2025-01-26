@@ -11,6 +11,7 @@ import com.aecoding.tictactoecompose.data.mappers.toGameState
 import com.aecoding.tictactoecompose.data.mappers.toRoom
 import com.aecoding.tictactoecompose.domain.entities.DialogState
 import com.aecoding.tictactoecompose.domain.entities.GameState
+import com.aecoding.tictactoecompose.domain.entities.Player
 import com.aecoding.tictactoecompose.presentation.utils.check
 import com.aecoding.tictactoecompose.presentation.utils.isBoardFull
 import kotlinx.coroutines.flow.launchIn
@@ -22,15 +23,26 @@ class OnlineGameViewModel(
 ) : BaseGameViewModel() {
     private var _roomId = mutableStateOf("")
 
-    fun getState(roomId: String) {
+    private lateinit var _player: Player
+
+    fun getState(roomId: String,player: String) {
         viewModelScope.launch {
             _roomId.value = roomId
             when (val result = repository.fetchRoom(roomId)) {
                 is Result.Error -> {}
                 is Result.Success -> {
                     setState(result.data.toRoom().gameState)
+                    setPlayer(player)
                 }
             }
+        }
+    }
+
+    private fun setPlayer(player: String){
+        if (player=="1"){
+            _player = gameState.value.playerOne
+        }else if(player=="2"){
+            _player = gameState.value.playerTwo
         }
     }
 
@@ -90,7 +102,7 @@ class OnlineGameViewModel(
     override fun makeMove(row: Int, column: Int) {
         val updatedBoard: List<List<Char>>
 
-        if (gameState.value.board[row][column] == ' ') {
+        if (gameState.value.board[row][column] == ' ' && _player.playerName == gameState.value.currentPlayer.playerName) {
             updatedBoard = gameState.value.board.mapIndexed { r, rowList ->
                 rowList.mapIndexed { c, cell ->
                     if (r == row && c == column) gameState.value.currentPlayer.symbol else cell
@@ -123,8 +135,10 @@ class OnlineGameViewModel(
 
     override fun resetGame() {
         sendState(GameState(
-            board = List(3) { List(3) { ' ' } }
+            board = List(3) { List(3) { ' ' } },
+            dialogState = DialogState.BackToTheMenu
         ))
+
     }
 
     override fun checkWinner(): Boolean {
