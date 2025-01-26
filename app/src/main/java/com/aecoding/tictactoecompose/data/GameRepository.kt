@@ -14,13 +14,9 @@ import kotlinx.coroutines.tasks.await
 class GameRepository(private val firestore: FirebaseFirestore) {
 
     private var roomListener: ListenerRegistration? = null
-    private lateinit var room: RoomDto
 
-    suspend fun sendState(state: GameStateDto): Result<Unit> =
+    suspend fun sendState(room: RoomDto): Result<Unit> =
         try {
-            room = room.copy(
-                gameState = state
-            )
             firestore.collection("rooms")
                 .document(room.roomId)
                 .set(room)
@@ -36,7 +32,6 @@ class GameRepository(private val firestore: FirebaseFirestore) {
             .get()
             .await()
         val fetchedRoom = querySnapshot.toObject(RoomDto::class.java)!!
-        room = fetchedRoom
         Result.Success(fetchedRoom)
     } catch (e: Exception) {
         Result.Error(e)

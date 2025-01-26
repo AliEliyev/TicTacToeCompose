@@ -6,12 +6,15 @@ import com.aecoding.tictactoecompose.core.BaseGameViewModel
 import com.aecoding.tictactoecompose.data.GameRepository
 import com.aecoding.tictactoecompose.data.Injection
 import com.aecoding.tictactoecompose.data.Result
+import com.aecoding.tictactoecompose.data.dto.RoomDto
 import com.aecoding.tictactoecompose.data.mappers.toDto
 import com.aecoding.tictactoecompose.data.mappers.toGameState
 import com.aecoding.tictactoecompose.data.mappers.toRoom
 import com.aecoding.tictactoecompose.domain.entities.DialogState
 import com.aecoding.tictactoecompose.domain.entities.GameState
+import com.aecoding.tictactoecompose.domain.entities.GameStatus
 import com.aecoding.tictactoecompose.domain.entities.Player
+import com.aecoding.tictactoecompose.domain.entities.Room
 import com.aecoding.tictactoecompose.presentation.utils.check
 import com.aecoding.tictactoecompose.presentation.utils.isBoardFull
 import kotlinx.coroutines.flow.launchIn
@@ -22,7 +25,7 @@ class OnlineGameViewModel(
     private val repository: GameRepository = GameRepository(Injection.instance())
 ) : BaseGameViewModel() {
     private var _roomId = mutableStateOf("")
-
+    private lateinit var _room: Room
     private lateinit var _player: Player
 
     fun getState(roomId: String,player: String) {
@@ -33,6 +36,7 @@ class OnlineGameViewModel(
                 is Result.Success -> {
                     setState(result.data.toRoom().gameState)
                     setPlayer(player)
+                    _room = result.data.toRoom()
                 }
             }
         }
@@ -46,10 +50,16 @@ class OnlineGameViewModel(
         }
     }
 
-    private fun sendState(state: GameState) {
+    private fun sendState(
+        state: GameState,
+        gameStatus: GameStatus = GameStatus.JOINED) {
         setState(state)
+        _room = _room.copy(
+            gameState = state,
+            gameStatus = gameStatus
+        )
         viewModelScope.launch {
-            repository.sendState(state.toDto())
+            repository.sendState(_room.toDto())
         }
     }
 
@@ -129,7 +139,8 @@ class OnlineGameViewModel(
         sendState(
             gameState.value.copy(
                 board = List(3) { List(3) { ' ' } }
-            )
+            ),
+            gameStatus = GameStatus.FINISHED
         )
     }
 
