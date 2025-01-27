@@ -1,6 +1,5 @@
 package com.aecoding.tictactoecompose.data
 
-import com.aecoding.tictactoecompose.data.dto.GameStateDto
 import com.aecoding.tictactoecompose.data.dto.RoomDto
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
@@ -37,7 +36,7 @@ class GameRepository(private val firestore: FirebaseFirestore) {
         Result.Error(e)
     }
 
-    fun getRoomFlow(roomId: String): Flow<Result<GameStateDto?>> = callbackFlow {
+    fun getRoomFlow(roomId: String): Flow<Result<RoomDto?>> = callbackFlow {
         roomListener = firestore.collection("rooms")
             .document(roomId)
             .addSnapshotListener { snapshot, error ->
@@ -47,7 +46,7 @@ class GameRepository(private val firestore: FirebaseFirestore) {
                 if (snapshot != null && snapshot.exists()) {
                     val room = snapshot.toObject(RoomDto::class.java)
                     if (room != null) {
-                        trySend(Result.Success(room.gameState))
+                        trySend(Result.Success(room))
                     }
                 }
             }

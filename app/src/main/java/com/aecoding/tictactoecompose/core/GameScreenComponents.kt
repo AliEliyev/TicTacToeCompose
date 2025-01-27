@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aecoding.tictactoecompose.domain.entities.DialogState
 import com.aecoding.tictactoecompose.presentation.screen.DrawScreen
+import com.aecoding.tictactoecompose.presentation.screen.ErrorDialog
 import com.aecoding.tictactoecompose.presentation.screen.GameBox
 import com.aecoding.tictactoecompose.presentation.screen.GameWinDialog
 import com.aecoding.tictactoecompose.presentation.screen.RoundWinDialog
@@ -110,6 +111,13 @@ fun GameScreenComponents(
             DialogState.BackToTheMenu -> {
                 viewModel.resetEffect()
                 onNavigateToMenu()
+            }
+            DialogState.ShowErrorDialog -> {
+                ErrorDialog(
+                    showDialog = true,
+                    onClick = {
+                        viewModel.resetGame()
+                    })
             }
             null -> {}
         }

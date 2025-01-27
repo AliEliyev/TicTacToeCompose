@@ -9,5 +9,6 @@ enum class TypeError(val text: String) {
 enum class RoomError(val text: String) {
     ROOM_FULL("The room is full. Please try another room."),
     INVALID_ID("Invalid ID provided."),
-    GAME_FINISHED("The game has already finished.")
+    GAME_FINISHED("The game has already finished."),
+    EMPTY_ROOM("The room is empty.")
 }

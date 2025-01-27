@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,6 +49,15 @@ fun WaitingScreen(
     LaunchedEffect(Unit) {
         waitingViewModel.startListening(roomId)
     }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            if (state.value.gameStatus != GameStatus.JOINED){
+                waitingViewModel.setStatus(GameStatus.OFFLINE)
+            }
+        }
+    }
+
 
     LaunchedEffect(state.value.gameStatus) {
         if (state.value.gameStatus == GameStatus.JOINED) {

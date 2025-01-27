@@ -5,8 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.aecoding.tictactoecompose.data.Injection
 import com.aecoding.tictactoecompose.data.RoomRepository
 import com.aecoding.tictactoecompose.data.Result
+import com.aecoding.tictactoecompose.data.mappers.toDto
 import com.aecoding.tictactoecompose.data.mappers.toRoom
 import com.aecoding.tictactoecompose.domain.entities.GameState
+import com.aecoding.tictactoecompose.domain.entities.GameStatus
 import com.aecoding.tictactoecompose.domain.entities.Room
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,6 +33,14 @@ class WaitingViewModel(
         viewModelScope.launch { listenForRoomUpdates(roomId) }
     }
 
+    fun setStatus(status: GameStatus){
+        _room.value = _room.value.copy(
+            gameStatus = status
+        )
+        viewModelScope.launch {
+            repository.saveRoom(_room.value.toDto())
+        }
+    }
 
     private fun listenForRoomUpdates(roomId: String) {
         repository.getRoomFlow(roomId).onEach { result ->

@@ -6,9 +6,7 @@ import com.aecoding.tictactoecompose.core.BaseGameViewModel
 import com.aecoding.tictactoecompose.data.GameRepository
 import com.aecoding.tictactoecompose.data.Injection
 import com.aecoding.tictactoecompose.data.Result
-import com.aecoding.tictactoecompose.data.dto.RoomDto
 import com.aecoding.tictactoecompose.data.mappers.toDto
-import com.aecoding.tictactoecompose.data.mappers.toGameState
 import com.aecoding.tictactoecompose.data.mappers.toRoom
 import com.aecoding.tictactoecompose.domain.entities.DialogState
 import com.aecoding.tictactoecompose.domain.entities.GameState
@@ -17,6 +15,8 @@ import com.aecoding.tictactoecompose.domain.entities.Player
 import com.aecoding.tictactoecompose.domain.entities.Room
 import com.aecoding.tictactoecompose.presentation.utils.check
 import com.aecoding.tictactoecompose.presentation.utils.isBoardFull
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -25,10 +25,16 @@ class OnlineGameViewModel(
     private val repository: GameRepository = GameRepository(Injection.instance())
 ) : BaseGameViewModel() {
     private var _roomId = mutableStateOf("")
-    private lateinit var _room: Room
+    private val _room = MutableStateFlow(
+        Room(
+            gameState = gameState.value,
+            gameStatus = GameStatus.JOINED
+        )
+    )
+    val room: StateFlow<Room> = _room
     private lateinit var _player: Player
 
-    fun getState(roomId: String,player: String) {
+    fun getState(roomId: String, player: String) {
         viewModelScope.launch {
             _roomId.value = roomId
             when (val result = repository.fetchRoom(roomId)) {
@@ -36,30 +42,31 @@ class OnlineGameViewModel(
                 is Result.Success -> {
                     setState(result.data.toRoom().gameState)
                     setPlayer(player)
-                    _room = result.data.toRoom()
+                    _room.value = result.data.toRoom()
                 }
             }
         }
     }
 
-    private fun setPlayer(player: String){
-        if (player=="1"){
+    private fun setPlayer(player: String) {
+        if (player == "1") {
             _player = gameState.value.playerOne
-        }else if(player=="2"){
+        } else if (player == "2") {
             _player = gameState.value.playerTwo
         }
     }
 
     private fun sendState(
         state: GameState,
-        gameStatus: GameStatus = GameStatus.JOINED) {
+        gameStatus: GameStatus = GameStatus.JOINED
+    ) {
         setState(state)
-        _room = _room.copy(
+        _room.value = _room.value.copy(
             gameState = state,
             gameStatus = gameStatus
         )
         viewModelScope.launch {
-            repository.sendState(_room.toDto())
+            repository.sendState(_room.value.toDto())
         }
     }
 
@@ -145,10 +152,12 @@ class OnlineGameViewModel(
     }
 
     override fun resetGame() {
-        sendState(GameState(
-            board = List(3) { List(3) { ' ' } },
-            dialogState = DialogState.BackToTheMenu
-        ))
+        sendState(
+            GameState(
+                board = List(3) { List(3) { ' ' } },
+                dialogState = DialogState.BackToTheMenu
+            )
+        )
 
     }
 
@@ -161,7 +170,18 @@ class OnlineGameViewModel(
     }
 
     fun startListening(roomId: String) {
-        viewModelScope.launch { listenForGameUpdates(roomId) }
+        viewModelScope.launch {
+            listenForGameUpdates(roomId)
+
+        }
+    }
+
+    fun setError() {
+        sendState(
+            gameState.value.copy(
+                dialogState = DialogState.ShowErrorDialog
+            )
+        )
     }
 
     private fun listenForGameUpdates(roomId: String) {
@@ -169,28 +189,30 @@ class OnlineGameViewModel(
             when (result) {
                 is Result.Success -> {
                     result.data?.let {
-                        if (checkState(it.toGameState())) {
-                            setState(it.toGameState())
+                        if (checkState(it.toRoom().gameState)) {
+                            setState(it.toRoom().gameState)
+                            _room.value = it.toRoom()
                         }
                     }
                 }
+
                 is Result.Error -> {}
             }
         }.launchIn(viewModelScope)
     }
 
-    private fun checkState(state: GameState): Boolean{
-        if (state.board!=gameState.value.board){
+    private fun checkState(state: GameState): Boolean {
+        if (state.board != gameState.value.board) {
             return true
-        }else if (state.playerOne!=gameState.value.playerOne){
+        } else if (state.playerOne != gameState.value.playerOne) {
             return true
-        }else if (state.playerTwo!=gameState.value.playerTwo){
+        } else if (state.playerTwo != gameState.value.playerTwo) {
             return true
-        }else if (state.dialogState!=gameState.value.dialogState){
+        } else if (state.dialogState != gameState.value.dialogState) {
             return true
-        }else if (state.currentPlayer!=gameState.value.currentPlayer){
+        } else if (state.currentPlayer != gameState.value.currentPlayer) {
             return true
-        }else if (state.winner!=gameState.value.winner){
+        } else if (state.winner != gameState.value.winner) {
             return true
         }
         return false

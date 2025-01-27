@@ -29,6 +29,7 @@ fun String.toGameEffect(): DialogState? {
         "ShowWinnerDialog" -> DialogState.ShowWinnerDialog
         "ShowDrawDialog" -> DialogState.ShowDrawDialog
         "ShowRoundDialog" -> DialogState.ShowRoundDialog
+        "ShowErrorDialog" -> DialogState.ShowErrorDialog
         "BackToTheMenu" -> DialogState.BackToTheMenu
         else -> null
     }

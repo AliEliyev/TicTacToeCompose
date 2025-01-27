@@ -78,6 +78,11 @@ class JoinViewModel(
                     ) {
                         _roomErrors.value = emptyList()
                         _roomErrors.value += RoomError.GAME_FINISHED
+                    }else if (result.data.toRoom().gameStatus == GameStatus.OFFLINE &&
+                        !_roomErrors.value.contains(RoomError.EMPTY_ROOM)
+                    ) {
+                        _roomErrors.value = emptyList()
+                        _roomErrors.value += RoomError.EMPTY_ROOM
                     }
                 }
             }
