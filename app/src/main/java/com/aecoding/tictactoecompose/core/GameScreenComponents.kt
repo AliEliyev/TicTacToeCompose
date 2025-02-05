@@ -1,4 +1,4 @@
-package com.aecoding.tictactoecompose.presentation.screen
+package com.aecoding.tictactoecompose.core
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,14 +16,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.aecoding.tictactoecompose.domain.entities.GameEffect
-import com.aecoding.tictactoecompose.presentation.viewmodel.GameViewModel
+import com.aecoding.tictactoecompose.domain.entities.DialogState
+import com.aecoding.tictactoecompose.presentation.screen.DrawScreen
+import com.aecoding.tictactoecompose.presentation.screen.ErrorDialog
+import com.aecoding.tictactoecompose.presentation.screen.GameBox
+import com.aecoding.tictactoecompose.presentation.screen.GameWinDialog
+import com.aecoding.tictactoecompose.presentation.screen.RoundWinDialog
 import com.aecoding.tictactoecompose.ui.theme.MainBg
 
 @Composable
-fun GameScreen(
-    viewModel: GameViewModel,
-    onNavigateToMenu: () -> Unit,
+fun GameScreenComponents(
+    viewModel: BaseGameViewModel,
+    onNavigateToMenu: () -> Unit
 ) {
     val gameState = viewModel.gameState.collectAsStateWithLifecycle()
 
@@ -42,7 +46,7 @@ fun GameScreen(
                 .padding(vertical = 20.dp, horizontal = 10.dp)
                 .fillMaxWidth()
                 .height(100.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceAround
         ) {
             Column(
                 modifier = Modifier.height(60.dp),
@@ -79,19 +83,18 @@ fun GameScreen(
                 }
             }
         }
-        when (gameState.value.gameEffect) {
-            GameEffect.ShowWinnerDialog -> {
+        when (gameState.value.dialogState) {
+            DialogState.ShowWinnerDialog -> {
                 GameWinDialog(
                     showDialog = true,
                     winner = gameState.value.winner,
                     onClick = {
-                        onNavigateToMenu()
                         viewModel.resetGame()
                     }
                 )
             }
 
-            GameEffect.ShowRoundDialog -> {
+            DialogState.ShowRoundDialog -> {
                 RoundWinDialog(
                     showDialog = true,
                     winner = gameState.value.winner,
@@ -99,11 +102,22 @@ fun GameScreen(
                 )
             }
 
-            GameEffect.ShowDrawDialog -> {
+            DialogState.ShowDrawDialog -> {
                 DrawScreen(
                     showDialog = true,
                     onClick = { viewModel.resetEffect() }
                 )
+            }
+            DialogState.BackToTheMenu -> {
+                viewModel.resetEffect()
+                onNavigateToMenu()
+            }
+            DialogState.ShowErrorDialog -> {
+                ErrorDialog(
+                    showDialog = true,
+                    onClick = {
+                        viewModel.resetGame()
+                    })
             }
             null -> {}
         }
@@ -114,7 +128,7 @@ fun GameScreen(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "${gameState.value.currentPlayer.playerName} 's Turn",
+                text = "${gameState.value.currentPlayer.playerName}'s Turn",
                 fontSize = 25.sp,
                 lineHeight = 31.35.sp,
             )
